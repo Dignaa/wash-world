@@ -38,8 +38,6 @@ This will start both the backend and the frontend servers.
 
 ✨ Contributors
 
-    Digna Bringule - Initial setup and configuration
-
-    Matej Rolko - Backend and API development
-
-    Frej Dahl Linneke - Frontend and mobile app development
+    Digna Bringule
+    Matej Rolko
+    Frej Dahl Linneke
