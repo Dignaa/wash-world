@@ -1,0 +1,19 @@
+# Node
+node_modules
+dist
+
+# Logs
+*.log
+
+# React Native
+ios/Pods
+android/.gradle
+android/app/build
+*.keystore
+
+# Expo
+.expo
+.expo-shared
+
+# Environment
+.env

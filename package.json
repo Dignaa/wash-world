@@ -1,0 +1,21 @@
+{
+  "name": "wash-world",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "workspaces": [
+    "native",
+    "nest"
+  ],
+  "scripts": {
+    "start": "concurrently \"npm run start:nest\" \"npm run start:native\"",
+    "start:nest": "npm --workspace nest run start:dev",
+    "start:native": "npm --workspace native run start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
