@@ -1,15 +1,15 @@
-import { IsDateString, IsString, IsInt } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMembershipDto {
-  @IsDateString()
+  @ApiProperty({ example: '2025-01-01T00:00:00.000Z' })
   start: Date;
 
-  @IsDateString()
+  @ApiProperty({ example: '2025-12-31T23:59:59.000Z' })
   end: Date;
 
-  @IsString()
-  type: string;
+  @ApiProperty({ example: 'Premium' })
+  type: 'gold' | 'premium' | 'brilliant';
 
-  @IsInt()
+  @ApiProperty({ example: 1 })
   userId: number;
 }

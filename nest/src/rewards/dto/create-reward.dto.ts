@@ -1,15 +1,15 @@
-import { IsString, IsDateString, IsBoolean, IsInt } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateRewardDto {
-  @IsString()
+  @ApiProperty({ example: 'Free Wash' })
   name: string;
 
-  @IsDateString()
+  @ApiProperty({ example: '2025-12-31T23:59:59.000Z' })
   expiryDate: Date;
 
-  @IsBoolean()
+  @ApiProperty({ example: false })
   isRedeemed: boolean;
 
-  @IsInt()
+  @ApiProperty({ example: 1 })
   userId: number;
 }

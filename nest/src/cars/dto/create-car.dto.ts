@@ -1,9 +1,9 @@
-import { IsString, IsInt } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCarDto {
-  @IsString()
+  @ApiProperty({ example: 'XYZ-1234' })
   registrationNumber: string;
 
-  @IsInt()
+  @ApiProperty({ example: 1, description: 'User ID who owns the car' })
   userId: number;
 }

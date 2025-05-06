@@ -1,22 +1,21 @@
-import { IsInt, IsDateString, IsNumber, IsBoolean, IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateWashDto {
-  @IsInt()
+  @ApiProperty({ example: 1 })
   carId: number;
 
-  @IsInt()
+  @ApiProperty({ example: 1 })
   userId: number;
 
-  @IsInt()
+  @ApiProperty({ example: 2 })
   locationId: number;
 
-  @IsDateString()
+  @ApiProperty({ example: '2025-04-29T15:00:00.000Z' })
   time: Date;
 
-  @IsOptional()
-  @IsNumber()
+  @ApiProperty({ example: 4.5, required: false })
   rating?: number;
 
-  @IsBoolean()
+  @ApiProperty({ example: false })
   emergencyStop: boolean;
 }

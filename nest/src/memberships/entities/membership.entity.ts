@@ -13,7 +13,7 @@ export class Membership {
   end: Date;
 
   @Column()
-  type: string;
+  type: 'gold' | 'premium' | 'brilliant';
 
   @ManyToOne(() => User, user => user.memberships)
   user: User;

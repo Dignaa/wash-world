@@ -1,15 +1,15 @@
-import { IsString, IsNumber } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateLocationDto {
-  @IsString()
+  @ApiProperty({ example: '123 Main St, Springfield' })
   address: string;
 
-  @IsNumber()
+  @ApiProperty({ example: 40.7128 })
   x: number;
 
-  @IsNumber()
+  @ApiProperty({ example: -74.006 })
   y: number;
 
-  @IsString()
+  @ApiProperty({ example: 'active', enum: ['active', 'inactive'] })
   status: string;
 }
