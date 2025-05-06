@@ -12,5 +12,6 @@ import { Reward } from 'src/rewards/entities/reward.entity';
   imports: [TypeOrmModule.forFeature([Membership, User, Car, Wash, Reward])],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UsersModule {}

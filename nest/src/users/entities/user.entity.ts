@@ -9,24 +9,27 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  name: string;
+  @Column({ nullable: true })
+  name?: string;
 
-  @Column()
-  phoneNumber: string;
+  @Column({ nullable: true })
+  phoneNumber?: string;
 
   @Column()
   emailAddress: string;
 
-  @OneToMany(() => Car, car => car.user)
+  @Column()
+  password: string;
+
+  @OneToMany(() => Car, (car) => car.user)
   cars: Car[];
 
-  @OneToMany(() => Reward, reward => reward.user)
+  @OneToMany(() => Reward, (reward) => reward.user)
   rewards: Reward[];
 
-  @OneToMany(() => Membership, membership => membership.user)
+  @OneToMany(() => Membership, (membership) => membership.user)
   memberships: Membership[];
 
-  @OneToMany(() => Wash, wash => wash.user)
+  @OneToMany(() => Wash, (wash) => wash.user)
   washes: Wash[];
 }
