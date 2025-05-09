@@ -1,11 +1,11 @@
-import { Provider } from "react-redux";
-import { store } from "../store";
-import NavigationWrapper from "@/components/navigation/NavigationWrapper";
+import { Provider } from 'react-redux';
+import { store } from '../store';
+import { Slot } from 'expo-router';
 
 export default function RootLayout() {
-    return (
-        <Provider store={store}>
-            <NavigationWrapper />
-        </Provider>
-    );
+  return (
+    <Provider store={store}>
+      <Slot />
+    </Provider>
+  );
 }
