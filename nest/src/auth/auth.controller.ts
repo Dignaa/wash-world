@@ -34,6 +34,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Signs up the user' })
   @ApiResponse({ status: 200, description: 'Newly created User', type: User })
   signIn(@Body() signupDto: SignUpDto) {
+    console.log('here');
     return this.authService.signup(signupDto);
   }
 }

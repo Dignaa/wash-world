@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     flexDirection: 'row',
     maxWidth: 500,
-    borderRadius: 4,
     borderColor: '#eeeeee',
     borderWidth: 2,
   },

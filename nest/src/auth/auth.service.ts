@@ -15,15 +15,15 @@ export class AuthService {
     return this.usersService.signUp(signupDto);
   }
 
-  async validateUser(emailAddress: string, password: string): Promise<any> {
-    const user = await this.usersService.findByEmail(emailAddress);
+  async validateUser(email: string, password: string): Promise<any> {
+    const user = await this.usersService.findByEmail(email);
     console.log('User fetched:', user);
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user;
       return result;
     }
-    console.log('Invalid credentials for:', emailAddress);
+    console.log('Invalid credentials for:', email);
 
     return null;
   }

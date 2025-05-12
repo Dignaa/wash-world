@@ -17,7 +17,7 @@ export default function Index() {
   return (
     <View>
       {halls.map((hall) => (
-        <Card hall={hall} />
+        <Card key={hall.location} hall={hall} />
       ))}
     </View>
   );

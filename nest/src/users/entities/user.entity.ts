@@ -16,7 +16,7 @@ export class User {
   phoneNumber?: string;
 
   @Column()
-  emailAddress: string;
+  email: string;
 
   @Column()
   password: string;

@@ -16,7 +16,7 @@ export class SignUpDto {
       message: 'Email must be a valid email address',
     },
   )
-  emailAddress: string;
+  email: string;
 
   @IsNotEmpty({ message: 'Password is required' })
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/, {

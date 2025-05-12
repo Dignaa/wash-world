@@ -31,7 +31,7 @@ export class UserService {
 
   async signUp(signUpDto: SignUpDto): Promise<User> {
     console.log('SignUpDto:', signUpDto);
-    if ((await this.isEmailUnique(signUpDto.emailAddress)) === false) {
+    if ((await this.isEmailUnique(signUpDto.email)) === false) {
       signUpDto.password = await bcrypt.hash(signUpDto.password, 10);
       const user = this.userRepository.create(signUpDto);
       return this.userRepository.save(user);
@@ -40,10 +40,8 @@ export class UserService {
     }
   }
 
-  async isEmailUnique(emailAddress: string): Promise<boolean> {
-    const count = await this.userRepository.count({ where: { emailAddress } });
-    console.log('Email count:', count);
-    console.log('Is email unique:', count <= 0);
+  async isEmailUnique(email: string): Promise<boolean> {
+    const count = await this.userRepository.count({ where: { email } });
     return count > 0;
   }
 
@@ -72,8 +70,8 @@ export class UserService {
     return user;
   }
 
-  async findByEmail(emailAddress: string): Promise<User | null> {
-    const user = await this.userRepository.findOne({ where: { emailAddress } });
+  async findByEmail(email: string): Promise<User | null> {
+    const user = await this.userRepository.findOne({ where: { email } });
     return user;
   }
 
