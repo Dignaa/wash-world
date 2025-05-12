@@ -9,7 +9,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {}
 export class LocalAuthGuard extends AuthGuard('local') {
   constructor(private authService: AuthService) {
     super({
-      usernameField: 'emailAdress',
+      usernameField: 'emailAddress',
     });
   }
 }

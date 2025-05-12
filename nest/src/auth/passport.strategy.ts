@@ -11,12 +11,12 @@ dotenv.config();
 export class LocalStrategy extends PassportStrategy(StrategyLOCAL) {
   constructor(private authService: AuthService) {
     super({
-      usernameField: 'email',
+      usernameField: 'emailAddress',
     });
   }
 
-  async validate(emailAdress: string, password: string): Promise<any> {
-    const user = await this.authService.validateUser(emailAdress, password);
+  async validate(emailAddress: string, password: string): Promise<any> {
+    const user = await this.authService.validateUser(emailAddress, password);
 
     if (!user) {
       throw new UnauthorizedException();

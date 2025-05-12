@@ -1,6 +1,5 @@
 import {
   Injectable,
-  HttpException,
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
@@ -13,6 +12,7 @@ import { Reward } from '../rewards/entities/reward.entity';
 import { Membership } from '../memberships/entities/membership.entity';
 import { Wash } from '../washes/entities/wash.entity';
 import { SignUpDto } from 'src/auth/dto/signupDto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
@@ -32,6 +32,7 @@ export class UserService {
   async signUp(signUpDto: SignUpDto): Promise<User> {
     console.log('SignUpDto:', signUpDto);
     if ((await this.isEmailUnique(signUpDto.emailAddress)) === false) {
+      signUpDto.password = await bcrypt.hash(signUpDto.password, 10);
       const user = this.userRepository.create(signUpDto);
       return this.userRepository.save(user);
     } else {
@@ -42,7 +43,7 @@ export class UserService {
   async isEmailUnique(emailAddress: string): Promise<boolean> {
     const count = await this.userRepository.count({ where: { emailAddress } });
     console.log('Email count:', count);
-    console.log('Is email unique:', count > 0);
+    console.log('Is email unique:', count <= 0);
     return count > 0;
   }
 
