@@ -6,10 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Wash } from 'src/washes/entities/wash.entity';
 import { Car } from 'src/cars/entities/car.entity';
-import { Reward } from 'src/rewards/entities/reward.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Membership, User, Car, Wash, Reward])],
+  imports: [TypeOrmModule.forFeature([Membership, User, Car, Wash])],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],

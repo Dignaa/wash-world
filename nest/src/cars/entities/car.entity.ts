@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Wash } from 'src/washes/entities/wash.entity';
+import { Membership } from 'src/memberships/entities/membership.entity';
 
 @Entity()
 export class Car {
@@ -9,6 +11,9 @@ export class Car {
   @Column()
   registrationNumber: string;
 
-  @ManyToOne(() => User, user => user.cars)
-  user: User;
+  @OneToMany(() => Wash, (wash) => wash.car)
+  washes: Wash[];
+
+  @OneToMany(() => Membership, (membership) => membership.car)
+  memberships: Membership[];
 }
