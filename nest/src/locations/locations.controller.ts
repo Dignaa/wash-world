@@ -1,6 +1,5 @@
 import { Controller, Get, Body, Param, Put, Delete } from '@nestjs/common';
 import { LocationService } from './locations.service';
-import { UpdateLocationDto } from './dto/update-location.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Location } from './entities/location.entity';
 
