@@ -16,8 +16,8 @@ import { Membership } from './entities/membership.entity';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { PremiumUserGuard } from 'src/auth/member.guard';
 
-@ApiTags('memberships')
-@Controller('users/:userId/memberships')
+@ApiTags('user')
+@Controller('user/:userId/memberships')
 export class MembershipsController {
   constructor(private readonly membershipsService: MembershipService) {}
 

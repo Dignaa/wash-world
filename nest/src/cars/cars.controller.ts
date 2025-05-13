@@ -1,7 +1,12 @@
 import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { CarService } from './cars.service';
 import { CreateCarDto } from './dto/create-car.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { Car } from './entities/car.entity';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 
@@ -23,6 +28,7 @@ export class CarController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
+  @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'Retrieve a car by ID' })
   @ApiResponse({ status: 200, description: 'Car details', type: Car })
   @ApiResponse({ status: 404, description: 'Car not found' })
