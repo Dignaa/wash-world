@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   Contains,
   IsEmail,
@@ -10,6 +11,7 @@ import {
 
 export class SignUpDto {
   @IsNotEmpty({ message: 'Email is required' })
+  @ApiProperty({ example: 'test@test.dk' })
   @IsEmail(
     {},
     {
@@ -19,6 +21,7 @@ export class SignUpDto {
   email: string;
 
   @IsNotEmpty({ message: 'Password is required' })
+  @ApiProperty({ example: 'Test12345' })
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/, {
     message:
       'Password must contain at least one uppercase letter, one lowercase letter, and one number',
