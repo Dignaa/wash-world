@@ -6,56 +6,84 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { MembershipService } from './memberships.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
 import { UpdateMembershipDto } from './dto/update-membership.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { Membership } from './entities/membership.entity';
+import { JwtAuthGuard } from 'src/auth/auth.guard';
+import { PremiumUserGuard } from 'src/auth/member.guard';
 
 @ApiTags('memberships')
-@Controller('memberships')
+@Controller('users/:userId/memberships')
 export class MembershipsController {
   constructor(private readonly membershipsService: MembershipService) {}
 
-  @Post()
+  @UseGuards(JwtAuthGuard)
+  @Post(':carId')
   @ApiOperation({ summary: 'Create a new membership' })
-  @ApiResponse({ status: 201, description: 'Membership created successfully.', type: Membership })
-  create(@Body() createMembershipDto: CreateMembershipDto) {
+  @ApiResponse({
+    status: 201,
+    description: 'Membership created successfully.',
+    type: Membership,
+  })
+  create(
+    @Param('userId') userId: Number,
+    @Param('carId') carId: Number,
+    @Body() createMembershipDto: CreateMembershipDto,
+  ) {
+    //  return this.membershipService.create(userId, carId, createMembershipDto);
     return this.membershipsService.create(createMembershipDto);
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Get all memberships' })
-  @ApiResponse({ status: 200, description: 'List of all memberships', type: [Membership] })
-  findAll() {
-    return this.membershipsService.findAll();
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Get a membership by ID' })
-  @ApiParam({ name: 'id', type: Number })
-  @ApiResponse({ status: 200, description: 'Membership found', type: Membership })
+  @UseGuards(JwtAuthGuard)
+  @Get(':carId')
+  @ApiOperation({ summary: 'Get a membership by user ID and car ID' })
+  @ApiParam({ name: 'userId', type: Number })
+  @ApiParam({ name: 'carId', type: Number })
+  @ApiResponse({
+    status: 200,
+    description: 'Membership found',
+    type: Membership,
+  })
   @ApiResponse({ status: 404, description: 'Membership not found' })
-  findOne(@Param('id') id: string) {
-    return this.membershipsService.findOne(+id);
+  findOne(@Param('userId') userId: number, @Param('carId') carId: number) {
+    //return this.membershipService.getByUserAndCar(userId, carId);
+    return this.membershipsService.find(userId);
   }
 
-  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  @ApiOperation({ summary: 'Get memberships of a user by UserID' })
+  @ApiParam({ name: 'userId', type: Number })
+  @ApiResponse({
+    status: 200,
+    description: 'Membership found',
+    type: Membership,
+  })
+  @ApiResponse({ status: 404, description: 'Membership not found' })
+  findMany(@Param('userId') userId: number) {
+    //return this.membershipService.getByUser(userId);
+  }
+
+  @UseGuards(PremiumUserGuard)
+  @Patch(':carId')
   @ApiOperation({ summary: 'Update a membership by ID' })
   @ApiParam({ name: 'id', type: Number })
-  @ApiResponse({ status: 200, description: 'Membership updated', type: Membership })
+  @ApiResponse({
+    status: 200,
+    description: 'Membership updated',
+    type: Membership,
+  })
   @ApiResponse({ status: 404, description: 'Membership not found' })
-  update(@Param('id') id: string, @Body() updateMembershipDto: UpdateMembershipDto) {
-    return this.membershipsService.update(+id, updateMembershipDto);
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete a membership by ID' })
-  @ApiParam({ name: 'id', type: Number })
-  @ApiResponse({ status: 200, description: 'Membership deleted', type: Membership })
-  @ApiResponse({ status: 404, description: 'Membership not found' })
-  remove(@Param('id') id: string) {
-    return this.membershipsService.remove(+id);
+  update(
+    @Param('userId') userId: number,
+    @Param('carId') carId: number,
+    @Body() updateMembershipDto: UpdateMembershipDto,
+  ) {
+    // return this.membershipsService.update(userId, carId, updateMembershipDto);
+    return this.membershipsService.update(userId, updateMembershipDto);
   }
 }

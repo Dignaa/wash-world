@@ -7,11 +7,12 @@ import { User } from './entities/user.entity';
 import { Wash } from 'src/washes/entities/wash.entity';
 import { Car } from 'src/cars/entities/car.entity';
 import { Reward } from 'src/rewards/entities/reward.entity';
+import { WashService } from 'src/washes/washes.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Membership, User, Car, Wash, Reward])],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, WashService],
   exports: [UserService],
 })
 export class UsersModule {}
