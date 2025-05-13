@@ -16,6 +16,9 @@ export class CreateWashDto {
   @ApiProperty({ example: 4.5, required: false })
   rating?: number;
 
+  @ApiProperty({ example: 2 })
+  washTypeId: number;
+
   @ApiProperty({ example: false })
   emergencyStop: boolean;
 }
