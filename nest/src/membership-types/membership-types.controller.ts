@@ -1,34 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { MembershipTypesService } from './membership-types.service';
-import { CreateMembershipTypeDto } from './dto/create-membership-type.dto';
-import { UpdateMembershipTypeDto } from './dto/update-membership-type.dto';
+import { MembershipType } from './entities/membership-type.entity';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('membership-types')
 @Controller('membership-types')
 export class MembershipTypesController {
-  constructor(private readonly membershipTypesService: MembershipTypesService) {}
-
-  @Post()
-  create(@Body() createMembershipTypeDto: CreateMembershipTypeDto) {
-    return this.membershipTypesService.create(createMembershipTypeDto);
-  }
+  constructor(
+    private readonly membershipTypesService: MembershipTypesService,
+  ) {}
 
   @Get()
+  @ApiOperation({ summary: 'Retrieve all membership types' })
+  @ApiResponse({
+    status: 200,
+    description: 'Membership types retrieved successfully',
+    type: [MembershipType],
+  })
   findAll() {
     return this.membershipTypesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.membershipTypesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMembershipTypeDto: UpdateMembershipTypeDto) {
-    return this.membershipTypesService.update(+id, updateMembershipTypeDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.membershipTypesService.remove(+id);
   }
 }

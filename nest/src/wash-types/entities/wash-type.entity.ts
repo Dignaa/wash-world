@@ -1,18 +1,17 @@
-import { Wash } from "src/washes/entities/wash.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Wash } from 'src/washes/entities/wash.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class WashType {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-      @PrimaryGeneratedColumn()
-      id: number;
+  @Column()
+  type: string;
 
-      @Column()
-      type: string;
-    
-      @Column({ type: 'float' })
-      price: number;
+  @Column({ type: 'float' })
+  price: number;
 
-      @OneToMany(() => Wash, (wash) => wash.washType)
-      washes: Wash[];
+  @OneToMany(() => Wash, (wash) => wash.washType)
+  washes: Wash[];
 }

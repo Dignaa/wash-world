@@ -1,34 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { WashTypesService } from './wash-types.service';
-import { CreateWashTypeDto } from './dto/create-wash-type.dto';
-import { UpdateWashTypeDto } from './dto/update-wash-type.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { WashType } from './entities/wash-type.entity';
 
+@ApiTags('wash-types')
 @Controller('wash-types')
 export class WashTypesController {
   constructor(private readonly washTypesService: WashTypesService) {}
 
-  @Post()
-  create(@Body() createWashTypeDto: CreateWashTypeDto) {
-    return this.washTypesService.create(createWashTypeDto);
-  }
-
   @Get()
+  @ApiOperation({ summary: 'Retrieve all wash types' })
+  @ApiResponse({
+    status: 200,
+    description: 'Wash types retrieved successfully',
+    type: [WashType],
+  })
   findAll() {
     return this.washTypesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.washTypesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWashTypeDto: UpdateWashTypeDto) {
-    return this.washTypesService.update(+id, updateWashTypeDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.washTypesService.remove(+id);
   }
 }

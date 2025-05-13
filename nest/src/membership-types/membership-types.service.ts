@@ -1,26 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMembershipTypeDto } from './dto/create-membership-type.dto';
-import { UpdateMembershipTypeDto } from './dto/update-membership-type.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { MembershipType } from './entities/membership-type.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class MembershipTypesService {
-  create(createMembershipTypeDto: CreateMembershipTypeDto) {
-    return 'This action adds a new membershipType';
-  }
+  constructor(
+    @InjectRepository(MembershipType)
+    private readonly membershipTypeRepository: Repository<MembershipType>,
+  ) {}
 
-  findAll() {
-    return `This action returns all membershipTypes`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} membershipType`;
-  }
-
-  update(id: number, updateMembershipTypeDto: UpdateMembershipTypeDto) {
-    return `This action updates a #${id} membershipType`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} membershipType`;
+  findAll(): Promise<MembershipType[]> {
+    return this.membershipTypeRepository.find();
   }
 }

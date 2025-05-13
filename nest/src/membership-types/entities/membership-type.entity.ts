@@ -1,18 +1,17 @@
-import { Membership } from "src/memberships/entities/membership.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Membership } from 'src/memberships/entities/membership.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class MembershipType {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-      @PrimaryGeneratedColumn()
-      id: number;
+  @Column()
+  type: string;
 
-      @Column()
-      type: string;
-    
-      @Column({ type: 'float' })
-      price: number;
+  @Column({ type: 'float' })
+  price: number;
 
-      @OneToMany(() => Membership, (membership) => membership.membershipType)
-      membership: Membership[];
+  @OneToMany(() => Membership, (membership) => membership.membershipType)
+  membership: Membership[];
 }

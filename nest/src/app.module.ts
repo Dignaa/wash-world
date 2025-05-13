@@ -10,6 +10,8 @@ import { MembershipsModule } from './memberships/memberships.module';
 import { UsersModule } from './users/users.module';
 import { WashesModule } from './washes/washes.module';
 import { AuthModule } from './auth/auth.module';
+import { MembershipTypesModule } from './membership-types/membership-types.module';
+import { WashTypesModule } from './wash-types/wash-types.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { AuthModule } from './auth/auth.module';
     CarsModule,
     LocationsModule,
     MembershipsModule,
+    MembershipTypesModule,
+    WashTypesModule,
     UsersModule,
     WashesModule,
   ],
