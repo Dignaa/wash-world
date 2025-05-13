@@ -1,5 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
+import { Location } from '../../locations/entities/location.entity';
+import { MembershipType } from 'src/membership-types/entities/membership-type.entity';
+import { Car } from 'src/cars/entities/car.entity';
 
 @Entity()
 export class Membership {
@@ -12,9 +15,15 @@ export class Membership {
   @Column()
   end: Date;
 
-  @Column()
-  type: 'gold' | 'premium' | 'brilliant';
-
   @ManyToOne(() => User, user => user.memberships)
   user: User;
+
+  @ManyToOne(() => Car, car => car.memberships)
+  car: Car;
+
+  @ManyToOne(() => Location, location => location.memberships)
+  location: Location;
+
+  @ManyToOne(() => MembershipType, membershipType => membershipType.membership)
+  membershipType: MembershipType;
 }

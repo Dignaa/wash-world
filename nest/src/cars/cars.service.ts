@@ -22,7 +22,6 @@ export class CarService {
     }
 
     const car = this.carRepository.create(createCarDto);
-    car.user = user;
 
     return this.carRepository.save(car);
   }

@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Car } from '../../cars/entities/car.entity';
 import { Location } from '../../locations/entities/location.entity';
+import { WashType } from '../../wash-types/entities/wash-type.entity';
 
 @Entity()
 export class Wash {
@@ -16,6 +17,9 @@ export class Wash {
 
   @ManyToOne(() => Location, location => location.washes)
   location: Location;
+
+  @ManyToOne(() => WashType, washType => washType.washes)
+  washType: WashType;
 
   @Column()
   time: Date;

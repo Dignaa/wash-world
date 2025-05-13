@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Wash } from '../../washes/entities/wash.entity';
+import { Membership } from 'src/memberships/entities/membership.entity';
 
 @Entity()
 export class Location {
@@ -13,11 +14,32 @@ export class Location {
   x: number;
 
   @Column('float')
-  y: number;
+  maxWheelWidth: number;
+
+  @Column('float')
+  height: number;
+
+  @Column()
+  selfWashes: number;
+
+  @Column()
+  washHalls: number;
+
+  @Column()
+  openTo: Date;
+
+  @Column()
+  openFrom: Date;
+
+  @Column()
+  imageUrl: string;
 
   @Column()
   status: string;
 
   @OneToMany(() => Wash, wash => wash.location)
   washes: Wash[];
+
+  @OneToMany(() => Membership, membership => membership.location)
+  memberships: Membership[];
 }
