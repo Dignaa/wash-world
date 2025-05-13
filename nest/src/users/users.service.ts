@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Car } from '../cars/entities/car.entity';
-import { Reward } from '../rewards/entities/reward.entity';
 import { Membership } from '../memberships/entities/membership.entity';
 import { Wash } from '../washes/entities/wash.entity';
 import { SignUpDto } from 'src/auth/dto/signupDto';
@@ -21,8 +20,6 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Car)
     private readonly carRepository: Repository<Car>,
-    @InjectRepository(Reward)
-    private readonly rewardRepository: Repository<Reward>,
     @InjectRepository(Membership)
     private readonly membershipRepository: Repository<Membership>,
     @InjectRepository(Wash)
