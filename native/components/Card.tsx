@@ -1,47 +1,60 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Button from './Button';
-import { LinkProps } from 'expo-router';
+import { Location } from '@/types/location';
+import { showLocation } from 'react-native-map-link';
 
-type Hall = {
-  location: string;
-  currentStatus: string;
-  openingHours: string;
-  waitTime: string;
-  userDistance: string;
-  link?: LinkProps['href'];
-};
 type CardProps = {
-  hall: Hall;
+  location: Location;
 };
 
-export default function Card({ hall }: CardProps) {
+export default function Card({ location }: CardProps) {
+  const statusColor =
+    location.status === 'operational'
+      ? 'green'
+      : location.status === 'maintenance'
+        ? 'yellow'
+        : 'red';
+
   return (
     <View style={styles.card}>
       <Image
         style={styles.image}
         source={{
-          uri: 'https://plus.unsplash.com/premium_photo-1681488098851-e3913f3b1908?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bWFwfGVufDB8fDB8fHww',
+          uri: location.imageUrl,
         }}
       />
       <View style={styles.content}>
-        <Text style={styles.title}>{hall.location}</Text>
+        <Text style={styles.title}>{location.address}</Text>
         <View style={styles.row}>
-          <Text>Status: {hall.currentStatus}</Text>
-          <Text>
-            {hall.openingHours}
+          <View style={styles.row}>
+            <Text>Status: </Text>
+            <View
+              style={[styles.indicator, { backgroundColor: statusColor }]}
+            />
+          </View>
+          <View style={styles.row}>
+            <Text>
+              {location.openFrom} - {location.openTo}
+            </Text>
             <MaterialCommunityIcons name="clock-outline" />
-          </Text>
+          </View>
         </View>
-        <View style={styles.row}>
-          <Text>Gns. ventetid:</Text>
-          <Text>{hall.waitTime} min.</Text>
-        </View>
-        <View style={styles.row}>
-          <Text>Afstand fra dig:</Text>
-          <Text>{hall.waitTime} km.</Text>
-        </View>
-        <Button link={hall.link} title="Find vej" />
+        {location.distance !== null && (
+          <View style={styles.row}>
+            <Text>Afstand fra dig:</Text>
+            <Text>{`${location.distance} km.`}</Text>
+          </View>
+        )}
+        <Button
+          title="Find vej"
+          onPress={() => {
+            showLocation({
+              latitude: location.y,
+              longitude: location.x,
+            });
+          }}
+        />
       </View>
     </View>
   );
@@ -52,11 +65,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     flexDirection: 'row',
     maxWidth: 500,
+    marginInline: 'auto',
     borderColor: '#eeeeee',
     borderWidth: 2,
   },
   image: {
-    width: 100,
+    width: 150,
     height: '100%',
   },
   content: {
@@ -71,5 +85,12 @@ const styles = StyleSheet.create({
   row: {
     justifyContent: 'space-between',
     flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  indicator: {
+    width: 14,
+    height: 14,
+    borderRadius: 10,
   },
 });
