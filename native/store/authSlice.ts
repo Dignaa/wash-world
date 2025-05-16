@@ -18,7 +18,7 @@ export const login = createAsyncThunk<
   { email: string; password: string }
 >('auth/login', async ({ email, password }, { rejectWithValue }) => {
   try {
-    const res = await fetch(process.env.FETCH_URL + 'auth/login', {
+    const res = await fetch(process.env.EXPO_PUBLIC_API_URL + 'auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -37,7 +37,7 @@ export const signup = createAsyncThunk<
   { email: string; password: string }
 >('auth/signup', async ({ email, password }, { rejectWithValue }) => {
   try {
-    const res = await fetch(process.env.FETCH_URL + 'auth/signup', {
+    const res = await fetch(process.env.EXPO_PUBLIC_API_URL + 'auth/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
