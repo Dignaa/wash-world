@@ -11,6 +11,9 @@ export class Location {
   address: string;
 
   @Column('float')
+  y: number;
+
+  @Column('float')
   x: number;
 
   @Column('float')
@@ -26,10 +29,10 @@ export class Location {
   washHalls: number;
 
   @Column()
-  openTo: Date;
+  openTo: string;
 
   @Column()
-  openFrom: Date;
+  openFrom: string;
 
   @Column()
   imageUrl: string;
@@ -37,9 +40,9 @@ export class Location {
   @Column()
   status: string;
 
-  @OneToMany(() => Wash, wash => wash.location)
+  @OneToMany(() => Wash, (wash) => wash.location)
   washes: Wash[];
 
-  @OneToMany(() => Membership, membership => membership.location)
+  @OneToMany(() => Membership, (membership) => membership.location)
   memberships: Membership[];
 }
