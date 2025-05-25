@@ -14,7 +14,7 @@ export class WashService {
 
   async create(createWashDto: CreateWashDto) {
     const washData = this.washRepository.create({
-      time: createWashDto.time,
+      time: new Date(),
       rating: createWashDto.rating,
       emergencyStop: createWashDto.emergencyStop,
       car: { id: createWashDto.carId },
