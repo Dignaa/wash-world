@@ -9,16 +9,16 @@ export class Wash {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Car, car => car.id)
+  @ManyToOne(() => Car, (car) => car.id)
   car: Car;
 
-  @ManyToOne(() => User, user => user.washes)
+  @ManyToOne(() => User, (user) => user.washes)
   user: User;
 
-  @ManyToOne(() => Location, location => location.washes)
+  @ManyToOne(() => Location, (location) => location.washes)
   location: Location;
 
-  @ManyToOne(() => WashType, washType => washType.washes)
+  @ManyToOne(() => WashType, (washType) => washType.washes)
   washType: WashType;
 
   @Column()
