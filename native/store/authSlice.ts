@@ -95,6 +95,8 @@ const authSlice = createSlice({
     logout: (state) => {
       deleteValue('jwt');
       state.token = null;
+      state.userId = null;
+      state.username = null;
     },
   },
   extraReducers: (builder) => {

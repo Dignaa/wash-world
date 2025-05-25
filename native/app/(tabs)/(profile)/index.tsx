@@ -73,7 +73,6 @@ export default function Profile() {
           },
         },
       );
-      console.log('Membership fetch data: ', res);
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
@@ -100,7 +99,6 @@ export default function Profile() {
           },
         },
       );
-      console.log('washes', res);
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
         throw new Error(errorData.message || 'Washes Fetch failed');
@@ -123,9 +121,6 @@ export default function Profile() {
     }
   };
 
-  console.log('userId', userId);
-  console.log('username', username);
-  console.log('token', token);
   if (token) {
     // Logged in Users profile page
     return (
