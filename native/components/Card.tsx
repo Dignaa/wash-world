@@ -40,10 +40,10 @@ export default function Card({ location }: CardProps) {
             <MaterialCommunityIcons name="clock-outline" />
           </View>
         </View>
-        {location.distance !== null && (
+        {location.distance !== null && location.distance !== undefined && (
           <View style={styles.row}>
             <Text>Afstand fra dig:</Text>
-            <Text>{`${location.distance} km.`}</Text>
+            <Text>{`≈ ${location.distance} km.`}</Text>
           </View>
         )}
         <Button
