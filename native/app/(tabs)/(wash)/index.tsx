@@ -1,4 +1,3 @@
-// Index.tsx
 import React, { useEffect, useState, useMemo } from 'react';
 import {
   View,
@@ -17,8 +16,8 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 
 interface Membership {
   id: number;
-  start: string; // ISO‐date string
-  end: string; // ISO‐date string
+  start: string;
+  end: string;
   user: {
     id: number;
     name: string | null;
@@ -57,11 +56,12 @@ interface WashType {
   price: number;
 }
 
+// Adjusted DTO: either carId or registrationNumber, and userId can be null
 interface CreateWashDto {
-  carId: number;
-  userId: number;
+  carId?: number;
+  registrationNumber?: string;
+  userId: number | null;
   locationId: number;
-  time: string; // ISO string
   washTypeId: number;
   emergencyStop: boolean;
   rating?: number;
@@ -70,7 +70,7 @@ interface CreateWashDto {
 interface WashResponse {
   id: number;
   carId: number;
-  userId: number;
+  userId: number | null;
   locationId: number;
   time: string;
   washTypeId: number;
@@ -103,7 +103,7 @@ export default function Index() {
     staleTime: 1000 * 60 * 5,
   });
 
-  // Filter out only “active” memberships (now between start and end)
+  // Active only
   const activeMemberships = useMemo(() => {
     if (!memberships) return [];
     const now = new Date();
@@ -128,12 +128,12 @@ export default function Index() {
       });
       return resp.data;
     },
-    enabled: Boolean(token),
     staleTime: 1000 * 60 * 5,
   });
 
   // ── 3) Local state ────────────────────────────────────────────────────
   const [pickedReg, setPickedReg] = useState<string>('');
+  const [manualReg, setManualReg] = useState<string>('');
   const [selectedWashTypeId, setSelectedWashTypeId] = useState<number | null>(
     null,
   );
@@ -153,6 +153,7 @@ export default function Index() {
     setWashStopped(false);
     setWashId(null);
     setPickedReg('');
+    setManualReg('');
     setSelectedWashTypeId(null);
     setRating(0);
     setIsWashing(false);
@@ -162,21 +163,18 @@ export default function Index() {
     onNewWash();
   }, [userId, token]);
 
-  // ── 4) Derive “selectedMembership” from pickedReg ──
+  // ── 4) Derive “selectedMembership” from dropdown only ──
   const selectedMembership = useMemo<Membership | null>(() => {
     if (!activeMemberships.length) return null;
-
-    // If user picked from the dropdown:
-    const fromList = activeMemberships.find(
-      (m) => m.car.registrationNumber === pickedReg,
+    return (
+      activeMemberships.find((m) => m.car.registrationNumber === pickedReg) ||
+      null
     );
-    return fromList || null;
   }, [pickedReg, activeMemberships]);
 
-  // ── 5) Which washType is “free” under their active membership ──
+  // ── 5) Which washType is “free” ─────────────────────────────────────
   const freeWashType: WashType | null = useMemo(() => {
     if (!selectedMembership || !washTypes) return null;
-
     return (
       washTypes.find(
         (w) =>
@@ -186,30 +184,33 @@ export default function Index() {
     );
   }, [selectedMembership, washTypes]);
 
-  // Auto-select the free wash whenever it becomes known:
   useEffect(() => {
     if (freeWashType) {
       setSelectedWashTypeId(freeWashType.id);
     }
   }, [freeWashType]);
 
-  // ── 6) Mutation: create a new wash ───────────────────────────────────
+  // ── 6) Create wash mutation ───────────────────────────────────────────
   const createWashMutation = useMutation<WashResponse, unknown, CreateWashDto>({
     mutationFn: async (newWashDto) => {
       const resp = await axios.post<WashResponse>(
         `${baseUrl}wash`,
         newWashDto,
-        { headers: { Authorization: `Bearer ${token}` } },
+        {
+          headers: { Authorization: token ? `Bearer ${token}` : '' },
+        },
       );
       return resp.data;
     },
     onSuccess: (data) => {
-      console.log(data);
       setWashId(data.id);
+    },
+    onError: (err) => {
+      console.log(err);
     },
   });
 
-  // ── 7) Mutation: PATCH-update an existing wash (rating/emergencyStop) ─
+  // ── 7) Update wash mutation ───────────────────────────────────────────
   const updateWashMutation = useMutation<
     WashResponse,
     unknown,
@@ -225,13 +226,11 @@ export default function Index() {
     },
   });
 
-  // ── 8) Start timer when wash is created ───────────────────────────────
+  // ── 8) Timer effect ─────────────────────────────────────────────────
   useEffect(() => {
     if (washId !== null && !washStopped) {
       setIsWashing(true);
       setCountdown(300);
-
-      // In React Native, setInterval returns a number:
       const id = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
@@ -243,24 +242,21 @@ export default function Index() {
           return prev - 1;
         });
       }, 1000);
-
       setTimerId(id as unknown as number);
     }
-
     return () => {
-      if (timerId !== null) {
-        clearInterval(timerId);
-      }
+      if (timerId !== null) clearInterval(timerId);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [washId]);
 
-  // ── 9) Handler: “Start vask” ─────────────────────────────────────────
+  // ── 9) Start wash handler ────────────────────────────────────────────
   const onStartVask = () => {
-    if (!selectedMembership) {
+    // require either dropdown or manual:
+    if (!pickedReg && !manualReg) {
       Alert.alert(
         'Fejl',
-        'Vælg venligst en gyldig, aktiv registreringsnummer.',
+        'Vælg eller indtast venligst et registreringsnummer.',
       );
       return;
     }
@@ -269,35 +265,39 @@ export default function Index() {
       return;
     }
 
+    // build DTO
+    const isManual = Boolean(manualReg);
     const dto: CreateWashDto = {
-      carId: selectedMembership.car.id,
-      userId: selectedMembership.user.id,
-      locationId: selectedMembership.location.id,
-      time: new Date().toISOString(),
+      ...(isManual
+        ? { registrationNumber: manualReg.trim().toUpperCase() }
+        : { carId: selectedMembership!.car.id }),
+      userId: userId || null,
+      locationId: selectedMembership!
+        ? selectedMembership.location.id
+        : /* fallback location */ 1,
       washTypeId: selectedWashTypeId,
       emergencyStop: false,
     };
+
     createWashMutation.mutate(dto);
   };
 
-  // ── 10) Handler: “Stop vask” ──────────────────────────────────────────
+  // ── 10) Stop wash ────────────────────────────────────────────────────
   const onStopVask = () => {
     if (washId === null) return;
-    if (timerId !== null) {
-      clearInterval(timerId);
-      setCountdown(0);
-      setIsWashing(false);
-      setShowRatingInput(true);
-      setWashStopped(true);
+    if (timerId !== null) clearInterval(timerId);
+    setCountdown(0);
+    setIsWashing(false);
+    setShowRatingInput(true);
+    setWashStopped(true);
 
-      updateWashMutation.mutate({
-        washId,
-        payload: { emergencyStop: true },
-      });
-    }
+    updateWashMutation.mutate({
+      washId,
+      payload: { emergencyStop: true },
+    });
   };
 
-  // ── 11) Handler: “Submit rating” ─────────────────────────────────────
+  // ── 11) Submit rating ────────────────────────────────────────────────
   const onSubmitRating = () => {
     if (washId === null || rating < 1 || rating > 5) {
       Alert.alert('Fejl', 'Indtast venligst en rating mellem 1 og 5.');
@@ -319,7 +319,7 @@ export default function Index() {
     );
   };
 
-  // ── 12) Loading / Error states ────────────────────────────────────────
+  // ── 12) Loading / Error ──────────────────────────────────────────────
   if (membershipsLoading || washTypesLoading) {
     return (
       <View style={styles.centered}>
@@ -355,11 +355,12 @@ export default function Index() {
       <View style={styles.container}>
         <Text style={styles.heading}>Vælg dit køretøj</Text>
 
-        {/* 13.1) Only list active memberships */}
+        {/* Dropdown */}
         <Picker
           selectedValue={pickedReg}
           onValueChange={(val) => {
             setPickedReg(val);
+            setManualReg(''); // clear manual when picking
           }}
           style={styles.picker}
         >
@@ -373,21 +374,34 @@ export default function Index() {
           ))}
         </Picker>
 
-        {/* right after your Picker */}
-        <Text>Antal aktive medlemskaber: {activeMemberships.length}</Text>
+        <Text style={styles.orText}>— ELLER —</Text>
 
-        {/* 13.4) If we have a valid selectedMembership (i.e. active), show wash options */}
-        {selectedMembership && (
+        {/* Manual input */}
+        <TextInput
+          placeholder="Indtast registreringsnummer manuelt"
+          value={manualReg}
+          onChangeText={(txt) => {
+            setManualReg(txt);
+            setPickedReg(''); // clear dropdown when typing
+          }}
+          style={styles.textInput}
+          autoCapitalize="characters"
+        />
+
+        <Text>Aktive medlemskaber: {activeMemberships.length}</Text>
+
+        {/* wash-type options */}
+        {(!manualReg ? selectedMembership : true) && (
           <>
             <Text style={[styles.heading, { marginTop: 20 }]}>
               Vælg vaske-type
             </Text>
             {washTypes?.map((w) => {
-              const isFree = freeWashType && freeWashType.id === w.id;
+              const isFree =
+                !manualReg && freeWashType && freeWashType.id === w.id;
               const extraCost = isFree
                 ? 0
                 : Math.max(0, w.price - (freeWashType?.price ?? 0));
-
               return (
                 <TouchableOpacity
                   key={w.id}
@@ -421,13 +435,12 @@ export default function Index() {
     );
   }
 
-  // ── 14) UI: While washing ─────────────────────────────────────────────
+  // ── 14) Washing ───────────────────────────────────────────────────────
   if (isWashing) {
     const minutes = Math.floor(countdown / 60)
       .toString()
       .padStart(2, '0');
     const seconds = (countdown % 60).toString().padStart(2, '0');
-
     return (
       <View style={styles.centered}>
         <Text style={styles.heading}>Vasken kører…</Text>
@@ -441,7 +454,7 @@ export default function Index() {
     );
   }
 
-  // ── 15) UI: Rating input ──────────────────────────────────────────────
+  // ── 15) Rating ────────────────────────────────────────────────────────
   if (showRatingInput) {
     return (
       <View style={styles.container}>
@@ -468,7 +481,6 @@ export default function Index() {
             <Text style={styles.startButtonText}>Send rating</Text>
           )}
         </TouchableOpacity>
-
         <TouchableOpacity
           style={[
             styles.startButton,

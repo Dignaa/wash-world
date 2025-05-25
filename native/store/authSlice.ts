@@ -6,7 +6,7 @@ interface AuthState {
   token: string | null;
   loading: boolean;
   error: string | null;
-  userId: string | null;
+  userId: number | null;
   username: string | null;
 }
 
@@ -20,13 +20,13 @@ const initialState: AuthState = {
 
 type JwtPayload = {
   token: string;
-  id: string;
+  id: number;
   name: string;
 };
 
 interface LoginResponse {
   token: string;
-  userId: string;
+  userId: number;
   username: string;
 }
 
