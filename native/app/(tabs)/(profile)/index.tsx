@@ -60,8 +60,7 @@ export default function Profile() {
   const fetchMemberships = async () => {
     try {
       if (!token || !userId) {
-        console.error('Membership fetch error: No token or userId found');
-        return;
+        await dispatch(checkAuth());
       }
 
       const res = await fetch(
