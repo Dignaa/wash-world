@@ -13,7 +13,7 @@ export class Wash {
   car: Car;
 
   @ManyToOne(() => User, (user) => user.washes)
-  user: User;
+  user?: User;
 
   @ManyToOne(() => Location, (location) => location.washes)
   location: Location;
