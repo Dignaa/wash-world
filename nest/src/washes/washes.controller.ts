@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { WashService } from './washes.service';
 import { CreateWashDto } from './dto/create-wash.dto';
@@ -40,7 +41,7 @@ export class WashController {
     return this.washService.findOne(id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({ summary: 'Update a wash by ID' })
   @ApiResponse({
     status: 200,

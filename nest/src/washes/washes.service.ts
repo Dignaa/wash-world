@@ -44,8 +44,8 @@ export class WashService {
     if (!existingWash) {
       throw new HttpException('Wash Not Found', 404);
     }
-    const washData = this.washRepository.merge(existingWash, updateWashDto);
-    return await this.washRepository.save(washData);
+    Object.assign(existingWash, updateWashDto);
+    return await this.washRepository.save(existingWash);
   }
 
   async remove(id: number): Promise<Wash | null> {
