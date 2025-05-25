@@ -49,10 +49,10 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get all washes for a user' })
-  @ApiParam({ name: 'userId', type: String })
+  @ApiParam({ name: 'userId', type: Number })
   @Get(':userId/washes')
-  getWashesForUser(@Param('userId') userId: string) {
+  getWashesForUser(@Param('userId') userId: number) {
     // implement this!
-    return this.washService.findAll();
+    return this.washService.findAll(userId);
   }
 }
