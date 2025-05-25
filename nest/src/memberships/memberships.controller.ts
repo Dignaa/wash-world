@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   UseGuards,
+  UnauthorizedException,
+  Request,
 } from '@nestjs/common';
 import { MembershipService } from './memberships.service';
 import { CreateMembershipDto } from './dto/create-membership.dto';
@@ -32,7 +34,14 @@ export class MembershipsController {
     @Param('userId') userId: number,
     @Param('carId') carId: number,
     @Body() createMembershipDto: CreateMembershipDto,
+    @Request() req,
   ) {
+    const tokenUserId: number = req.user?.id;
+    if (tokenUserId && tokenUserId != userId) {
+      throw new UnauthorizedException(
+        'You do not have access to other users data. Please use your own user ID.',
+      );
+    }
     createMembershipDto.userId = userId;
     createMembershipDto.carId = carId;
     return this.membershipService.create(createMembershipDto);
@@ -49,7 +58,17 @@ export class MembershipsController {
     type: Membership,
   })
   @ApiResponse({ status: 404, description: 'Membership not found' })
-  findOne(@Param('userId') userId: number, @Param('carId') carId: number) {
+  findOne(
+    @Param('userId') userId: number,
+    @Param('carId') carId: number,
+    @Request() req,
+  ) {
+    const tokenUserId: number = req.user?.id;
+    if (tokenUserId && tokenUserId != userId) {
+      throw new UnauthorizedException(
+        'You do not have access to other users data. Please use your own user ID.',
+      );
+    }
     return this.membershipService.getByUserAndCar(userId, carId);
   }
 
@@ -63,7 +82,13 @@ export class MembershipsController {
     type: Membership,
   })
   @ApiResponse({ status: 404, description: 'Membership not found' })
-  findMany(@Param('userId') userId: number) {
+  findMany(@Param('userId') userId: number, @Request() req) {
+    const tokenUserId: number = req.user?.id;
+    if (tokenUserId && tokenUserId != userId) {
+      throw new UnauthorizedException(
+        'You do not have access to other users data. Please use your own user ID.',
+      );
+    }
     return this.membershipService.getByUser(userId);
   }
 
@@ -81,8 +106,14 @@ export class MembershipsController {
     @Param('userId') userId: number,
     @Param('carId') carId: number,
     @Body() updateMembershipDto: UpdateMembershipDto,
+    @Request() req,
   ) {
-    // return this.membershipsService.update(userId, carId, updateMembershipDto);
+    const tokenUserId: number = req.user?.id;
+    if (tokenUserId && tokenUserId != userId) {
+      throw new UnauthorizedException(
+        'You do not have access to other users data. Please use your own user ID.',
+      );
+    }
     updateMembershipDto.userId = userId;
     updateMembershipDto.carId = carId;
     return this.membershipService.update(updateMembershipDto);

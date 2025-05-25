@@ -4,16 +4,14 @@ import {
   Body,
   Param,
   Put,
-  Delete,
   UseGuards,
-  Query,
-  BadRequestException,
+  Request,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { User } from './entities/user.entity';
-import { PremiumUserGuard } from 'src/auth/member.guard';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { WashService } from 'src/washes/washes.service';
 
@@ -30,7 +28,13 @@ export class UserController {
   @ApiOperation({ summary: 'Retrieve a user by ID' })
   @ApiResponse({ status: 200, description: 'User details', type: User })
   @ApiResponse({ status: 404, description: 'User not found' })
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id') id: number, @Request() req) {
+    const tokenUserId: number = req.user?.id;
+    if (tokenUserId && tokenUserId != id) {
+      throw new UnauthorizedException(
+        'You do not have access to other users data. Please use your own user ID.',
+      );
+    }
     return this.userService.findOne(id);
   }
 
@@ -43,7 +47,17 @@ export class UserController {
     type: User,
   })
   @ApiResponse({ status: 404, description: 'User not found' })
-  update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
+  update(
+    @Param('id') id: number,
+    @Body() updateUserDto: UpdateUserDto,
+    @Request() req,
+  ) {
+    const tokenUserId: number = req.user?.id;
+    if (tokenUserId && tokenUserId != id) {
+      throw new UnauthorizedException(
+        'You do not have access to other users data. Please use your own user ID.',
+      );
+    }
     return this.userService.update(id, updateUserDto);
   }
 
@@ -51,8 +65,13 @@ export class UserController {
   @ApiOperation({ summary: 'Get all washes for a user' })
   @ApiParam({ name: 'userId', type: Number })
   @Get(':userId/washes')
-  getWashesForUser(@Param('userId') userId: number) {
-    // implement this!
+  getWashesForUser(@Param('userId') userId: number, @Request() req) {
+    const tokenUserId: number = req.user?.id;
+    if (tokenUserId && tokenUserId != userId) {
+      throw new UnauthorizedException(
+        'You do not have access to other users data. Please use your own user ID.',
+      );
+    }
     return this.washService.findAll(userId);
   }
 }
