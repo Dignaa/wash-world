@@ -27,15 +27,9 @@ export default function Button({
   // If a link is provided, wrap with expo-router’s Link
   if (link) {
     return (
-      <Pressable
-        onPress={() => {}}
-        style={[styles.button, style]}
-        // Link itself handles navigation—instead of using onPress here you can wrap the Text in a Link
-      >
-        <Link href={link} style={styles.link}>
-          <Text style={[styles.text, textStyle]}>{title}</Text>
-        </Link>
-      </Pressable>
+      <Link href={link} style={styles.button}>
+        <Text style={[styles.text, textStyle]}>{title}</Text>
+      </Link>
     );
   }
 

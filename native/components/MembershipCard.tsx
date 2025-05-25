@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
   },
+
   licenseNo: {
     color: '#000',
     textAlign: 'right',

@@ -168,7 +168,10 @@ export default function Profile() {
 
             <View style={styles.buttonWrapper}>
               <View style={[styles.buttonFlexBox]}>
-                <Button title="Add membership" onPress={() => {}} />
+                <Button
+                  title="Add membership"
+                  link="/(tabs)/(profile)/membership"
+                />
               </View>
             </View>
           </View>

@@ -24,14 +24,14 @@ type JwtPayload = {
   name: string;
 };
 
-interface LoginResponse {
+interface LoggedInResponse {
   token: string;
   userId: string;
   username: string;
 }
 
 export const login = createAsyncThunk<
-  LoginResponse,
+  LoggedInResponse,
   { email: string; password: string }
 >('auth/login', async ({ email, password }, { rejectWithValue }) => {
   try {
@@ -75,13 +75,20 @@ export const signup = createAsyncThunk<
   }
 });
 
-export const checkAuth = createAsyncThunk<string, void>(
+export const checkAuth = createAsyncThunk<LoggedInResponse, void>(
   'auth/checkAuth',
   async (_, { rejectWithValue }) => {
     try {
       const token = await getValue('jwt');
       if (!token) throw new Error('No token found');
-      return token;
+
+      const decoded: JwtPayload = jwtDecode(token);
+
+      return {
+        token: token,
+        userId: decoded.id,
+        username: decoded.name,
+      };
     } catch (error: any) {
       return rejectWithValue(error.message);
     }
@@ -107,7 +114,7 @@ const authSlice = createSlice({
       })
       .addCase(
         login.fulfilled,
-        (state, action: PayloadAction<LoginResponse>) => {
+        (state, action: PayloadAction<LoggedInResponse>) => {
           state.loading = false;
           state.token = action.payload.token;
           state.userId = action.payload.userId;
@@ -134,10 +141,15 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(checkAuth.fulfilled, (state, action: PayloadAction<string>) => {
-        state.loading = false;
-        state.token = action.payload;
-      })
+      .addCase(
+        checkAuth.fulfilled,
+        (state, action: PayloadAction<LoggedInResponse>) => {
+          state.loading = false;
+          state.token = action.payload.token;
+          state.userId = action.payload.userId;
+          state.username = action.payload.username;
+        },
+      )
       .addCase(checkAuth.rejected, (state, action) => {
         state.loading = false;
         state.token = null;
