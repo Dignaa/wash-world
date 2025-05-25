@@ -56,15 +56,13 @@ interface WashType {
   price: number;
 }
 
-// Adjusted DTO: either carId or registrationNumber, and userId can be null
+// Adjusted DTO: either carId or licensePlate, and userId can be null
 interface CreateWashDto {
   carId?: number;
-  registrationNumber?: string;
+  licensePlate?: string;
   userId: number | null;
   locationId: number;
   washTypeId: number;
-  emergencyStop: boolean;
-  rating?: number;
 }
 
 interface WashResponse {
@@ -269,14 +267,13 @@ export default function Index() {
     const isManual = Boolean(manualReg);
     const dto: CreateWashDto = {
       ...(isManual
-        ? { registrationNumber: manualReg.trim().toUpperCase() }
+        ? { licensePlate: manualReg.trim().toUpperCase() }
         : { carId: selectedMembership!.car.id }),
       userId: userId || null,
       locationId: selectedMembership!
         ? selectedMembership.location.id
-        : /* fallback location */ 1,
+        : /* fallback location */ 4,
       washTypeId: selectedWashTypeId,
-      emergencyStop: false,
     };
 
     createWashMutation.mutate(dto);
