@@ -27,7 +27,6 @@ export class UserService {
   ) {}
 
   async signUp(signUpDto: SignUpDto): Promise<User> {
-    console.log('SignUpDto:', signUpDto);
     if ((await this.isEmailUnique(signUpDto.email)) === false) {
       signUpDto.password = await bcrypt.hash(signUpDto.password, 10);
       const user = this.userRepository.create(signUpDto);

@@ -29,9 +29,15 @@ export class MembershipService {
     return this.membershipRepository.save(membership);
   }
 
-  async find(id: number): Promise<Membership> {
+  async getByUserAndCar(
+    userId: number | undefined,
+    carId: number | undefined,
+  ): Promise<Membership> {
+    if (!userId || !carId) {
+      throw new HttpException('User ID and Car ID are required', 400);
+    }
     const membership = await this.membershipRepository.findOne({
-      where: { id },
+      where: { user: { id: userId }, car: { id: carId } },
     });
     if (!membership) {
       throw new HttpException('Membership Not Found', 404);
@@ -39,11 +45,21 @@ export class MembershipService {
     return membership;
   }
 
-  async update(
-    id: number,
-    updateMembershipDto: UpdateMembershipDto,
-  ): Promise<Membership> {
-    const membership = await this.find(id);
+  async getByUser(userId: number): Promise<Membership[]> {
+    const memberships = await this.membershipRepository.find({
+      where: { user: { id: userId } },
+    });
+    if (!memberships) {
+      throw new HttpException('Membership Not Found', 404);
+    }
+    return memberships || [];
+  }
+
+  async update(updateMembershipDto: UpdateMembershipDto): Promise<Membership> {
+    const membership = await this.getByUserAndCar(
+      updateMembershipDto.userId,
+      updateMembershipDto.carId,
+    );
     const updatedMembership = this.membershipRepository.merge(
       membership,
       updateMembershipDto,

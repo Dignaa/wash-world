@@ -13,7 +13,7 @@ export class CreateMembershipDto {
   @ApiProperty({ example: 2 })
   typeId: number;
 
-  @ApiProperty({ example: 2 })
+  @ApiProperty({ example: 1 })
   carId: number;
 
   @ApiProperty({ example: 1 })
