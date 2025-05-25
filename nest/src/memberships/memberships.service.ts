@@ -38,6 +38,7 @@ export class MembershipService {
     }
     const membership = await this.membershipRepository.findOne({
       where: { user: { id: userId }, car: { id: carId } },
+      relations: ['user', 'car', 'location', 'membershipType'],
     });
     if (!membership) {
       throw new HttpException('Membership Not Found', 404);
@@ -48,6 +49,7 @@ export class MembershipService {
   async getByUser(userId: number): Promise<Membership[]> {
     const memberships = await this.membershipRepository.find({
       where: { user: { id: userId } },
+      relations: ['user', 'car', 'location', 'membershipType'],
     });
     if (!memberships) {
       throw new HttpException('Membership Not Found', 404);
