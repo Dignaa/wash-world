@@ -12,52 +12,51 @@ export default function Index() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
   useEffect(() => {
-    fetchLocations().finally(initLocationIfAllowed);
+    const fetch = async () => {
+      const data = await fetchLocations();
+      await initLocationIfAllowed(data);
+    };
+    fetch();
   }, []);
 
-  const fetchLocations = async () => {
+  const fetchLocations = async (): Promise<LocationType[]> => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}location`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}location`);
       const data: LocationType[] = await res.json();
       if (!res.ok) throw new Error((data as any).message || 'Fetch failed');
       setLocations(data);
-    } catch (error: any) {
-      console.error('Fetch error:', error.message);
+      return data;
+    } catch (e: any) {
+      console.error('Fetch error:', e.message);
+      return [];
     } finally {
       setLoading(false);
     }
   };
 
-  const initLocationIfAllowed = async () => {
+  const initLocationIfAllowed = async (data: LocationType[]) => {
     const { status } = await Location.getForegroundPermissionsAsync();
     setHasPermission(status === 'granted');
     if (status === 'granted') {
-      await sortByDistance();
+      sortByDistance(data);
     }
   };
 
-  const sortByDistance = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      setHasPermission(false);
-      return;
-    }
-    setHasPermission(true);
-
-    const position = await Location.getCurrentPositionAsync({
+  const sortByDistance = async (data: LocationType[]) => {
+    // no need to re-request permission here
+    const { coords } = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Highest,
     });
-    const { latitude, longitude } = position.coords;
+    const withDistances = data
+      .map((loc) => ({
+        ...loc,
+        distance: Math.round(
+          getDistance(coords.latitude, coords.longitude, loc.y, loc.x),
+        ),
+      }))
+      .sort((a, b) => a.distance! - b.distance!);
 
-    const withDistances = locations.map((loc) => ({
-      ...loc,
-      distance: Math.round(getDistance(latitude, longitude, loc.y, loc.x)),
-    }));
-    withDistances.sort((a, b) => a.distance! - b.distance!);
     setLocations(withDistances);
   };
 
@@ -89,16 +88,17 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      {hasPermission === false && (
-        <Button title="Brug lokation" onPress={sortByDistance} />
+      {hasPermission !== true && (
+        <Button
+          title="Brug lokation"
+          onPress={() => sortByDistance(locations)}
+        />
       )}
 
       {locations.length === 0 ? (
         <Text style={styles.empty}>No locations found.</Text>
       ) : (
-        locations.map((location) => (
-          <Card key={location.id} location={location} />
-        ))
+        locations.map((loc) => <Card key={loc.id} location={loc} />)
       )}
     </View>
   );
