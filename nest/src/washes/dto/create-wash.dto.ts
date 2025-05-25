@@ -2,10 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateWashDto {
   @ApiProperty({ example: 1 })
-  carId: number;
+  carId?: number;
+
+  @ApiProperty({ example: 'AB1234' })
+  licensePlate?: string;
 
   @ApiProperty({ example: 1 })
-  userId: number;
+  userId?: number;
 
   @ApiProperty({ example: 2 })
   locationId: number;
