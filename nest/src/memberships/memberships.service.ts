@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Membership } from './entities/membership.entity';
 import { User } from '../users/entities/user.entity';
+import { Car } from 'src/cars/entities/car.entity';
 
 @Injectable()
 export class MembershipService {
@@ -13,6 +14,8 @@ export class MembershipService {
     private readonly membershipRepository: Repository<Membership>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Car)
+    private readonly carRepository: Repository<Car>,
   ) {}
 
   async create(createMembershipDto: CreateMembershipDto): Promise<Membership> {
@@ -23,8 +26,27 @@ export class MembershipService {
       throw new HttpException('User Not Found', 404);
     }
 
-    const membership = this.membershipRepository.create(createMembershipDto);
-    membership.user = user;
+    const car = await this.carRepository.findOne({
+      where: { registrationNumber: createMembershipDto.licensePlate },
+    });
+    var newCar;
+    if (!car) {
+      newCar = await this.carRepository.save({
+        registrationNumber: createMembershipDto.licensePlate,
+      });
+      createMembershipDto.carId = newCar.id;
+    } else {
+      createMembershipDto.carId = car.id;
+    }
+
+    const membership = this.membershipRepository.create({
+      start: new Date(),
+      end: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+      car: { id: createMembershipDto.carId },
+      location: { id: createMembershipDto.locationId },
+      membershipType: { id: createMembershipDto.typeId },
+      user: { id: createMembershipDto.userId },
+    });
 
     return this.membershipRepository.save(membership);
   }

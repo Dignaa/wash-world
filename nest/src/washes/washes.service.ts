@@ -16,6 +16,8 @@ export class WashService {
   ) {}
 
   async create(createWashDto: CreateWashDto) {
+    console.log('Create Wash:', createWashDto);
+
     if (!createWashDto.carId && !createWashDto.licensePlate) {
       throw new HttpException('Car ID or License Plate is required', 400);
     }
@@ -49,6 +51,7 @@ export class WashService {
       location: { id: createWashDto.locationId },
       washType: { id: createWashDto.washTypeId },
     });
+
     return this.washRepository.save(washData);
   }
 

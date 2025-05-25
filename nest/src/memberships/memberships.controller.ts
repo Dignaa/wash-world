@@ -23,7 +23,7 @@ export class MembershipsController {
   constructor(private readonly membershipService: MembershipService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Post(':carId')
+  @Post()
   @ApiOperation({ summary: 'Create a new membership' })
   @ApiResponse({
     status: 201,
@@ -32,7 +32,6 @@ export class MembershipsController {
   })
   create(
     @Param('userId') userId: number,
-    @Param('carId') carId: number,
     @Body() createMembershipDto: CreateMembershipDto,
     @Request() req,
   ) {
@@ -43,7 +42,6 @@ export class MembershipsController {
       );
     }
     createMembershipDto.userId = userId;
-    createMembershipDto.carId = carId;
     return this.membershipService.create(createMembershipDto);
   }
 
