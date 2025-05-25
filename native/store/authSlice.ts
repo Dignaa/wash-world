@@ -1,20 +1,37 @@
 import { deleteValue, getValue, saveValue } from '@/utils/secureStorage';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { jwtDecode } from 'jwt-decode';
 
 interface AuthState {
   token: string | null;
   loading: boolean;
   error: string | null;
+  userId: string | null;
+  username: string | null;
 }
 
 const initialState: AuthState = {
   token: null,
   loading: false,
   error: null,
+  userId: null,
+  username: null,
 };
 
+type JwtPayload = {
+  token: string;
+  id: string;
+  name: string;
+};
+
+interface LoginResponse {
+  token: string;
+  userId: string;
+  username: string;
+}
+
 export const login = createAsyncThunk<
-  string,
+  LoginResponse,
   { email: string; password: string }
 >('auth/login', async ({ email, password }, { rejectWithValue }) => {
   try {
@@ -26,7 +43,14 @@ export const login = createAsyncThunk<
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Login failed');
     await saveValue('jwt', data.token);
-    return data.token;
+
+    const decoded: JwtPayload = jwtDecode(data.token);
+
+    return {
+      token: data.token,
+      userId: decoded.id,
+      username: decoded.name,
+    };
   } catch (error: any) {
     return rejectWithValue(error.message);
   }
@@ -79,10 +103,15 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(login.fulfilled, (state, action: PayloadAction<string>) => {
-        state.loading = false;
-        state.token = action.payload;
-      })
+      .addCase(
+        login.fulfilled,
+        (state, action: PayloadAction<LoginResponse>) => {
+          state.loading = false;
+          state.token = action.payload.token;
+          state.userId = action.payload.userId;
+          state.username = action.payload.username;
+        },
+      )
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;

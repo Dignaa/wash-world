@@ -24,8 +24,6 @@ export class AuthController {
   @ApiOperation({ summary: 'Signs in the user' })
   @ApiResponse({ status: 200, description: 'JWT token' })
   async login(@Req() req) {
-    console.log('Login: ', req);
-
     return this.authService.login(req.user);
   }
 

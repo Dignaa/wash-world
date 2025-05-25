@@ -26,18 +26,12 @@ export class UserController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get(':id')
   @ApiOperation({ summary: 'Retrieve a user by ID' })
   @ApiResponse({ status: 200, description: 'User details', type: User })
   @ApiResponse({ status: 404, description: 'User not found' })
-  findOne(@Query('userId') userId?: number, @Query('email') email?: string) {
-    if (userId) {
-      return this.userService.findOne(userId);
-    } else if (email) {
-      return this.userService.findByEmail(email);
-    } else {
-      throw new BadRequestException('No userId or email provided');
-    }
+  findOne(@Param('id') id: number) {
+    return this.userService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
