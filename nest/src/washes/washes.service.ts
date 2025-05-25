@@ -13,8 +13,15 @@ export class WashService {
   ) {}
 
   async create(createWashDto: CreateWashDto) {
-    const washData = this.washRepository.create(createWashDto);
-
+    const washData = this.washRepository.create({
+      time: createWashDto.time,
+      rating: createWashDto.rating,
+      emergencyStop: createWashDto.emergencyStop,
+      car: { id: createWashDto.carId },
+      user: { id: createWashDto.userId },
+      location: { id: createWashDto.locationId },
+      washType: { id: createWashDto.washTypeId },
+    });
     return this.washRepository.save(washData);
   }
 
