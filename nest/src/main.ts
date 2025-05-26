@@ -13,6 +13,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document); // Swagger UI available at /api
-  await app.listen(3001);
+  await app.listen(3000);
 }
 bootstrap();
