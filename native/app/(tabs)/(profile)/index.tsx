@@ -22,6 +22,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { Wash } from '@/types';
 import { Membership } from '@/types';
+import { Link } from 'expo-router';
 
 export default function Profile() {
   const dispatch = useDispatch<AppDispatch>();
@@ -156,12 +157,22 @@ export default function Profile() {
               <Text style={styles.centeredText}>No memberships.</Text>
             ) : (
               memberships.map((membership) => (
-                <MembershipCard
+                <Link
                   key={membership.id}
-                  membershipType={membership.membershipType.type}
-                  price={membership.membershipType.price}
-                  licensePlate={membership.car.registrationNumber}
-                />
+                  href={{
+                    pathname: '/(tabs)/(profile)/[membershipId]',
+                    params: { membershipId: membership.id },
+                  }}
+                  style={{ width: '100%' }}
+                >
+                  <View style={{ width: '100%' }}>
+                    <MembershipCard
+                      membershipType={membership.membershipType.type}
+                      price={membership.membershipType.price}
+                      licensePlate={membership.car.registrationNumber}
+                    />
+                  </View>
+                </Link>
               ))
             )}
 
