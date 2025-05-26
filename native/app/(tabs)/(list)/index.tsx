@@ -36,8 +36,16 @@ export default function Index() {
   };
 
   const initLocationIfAllowed = async (data: LocationType[]) => {
-    const { status } = await Location.getForegroundPermissionsAsync();
+    let { status } = await Location.getForegroundPermissionsAsync();
+
+    if (status !== 'granted') {
+      const permissionResponse =
+        await Location.requestForegroundPermissionsAsync();
+      status = permissionResponse.status;
+    }
+
     setHasPermission(status === 'granted');
+
     if (status === 'granted') {
       sortByDistance(data);
     }

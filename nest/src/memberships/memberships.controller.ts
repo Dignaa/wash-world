@@ -16,13 +16,14 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { Membership } from './entities/membership.entity';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { PremiumUserGuard } from 'src/auth/member.guard';
+import { OwnershipGuard } from 'src/auth/ownership.guard';
 
 @ApiTags('user')
 @Controller('user/:userId/memberships')
 export class MembershipsController {
   constructor(private readonly membershipService: MembershipService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, OwnershipGuard)
   @Post()
   @ApiOperation({ summary: 'Create a new membership' })
   @ApiResponse({
@@ -33,19 +34,12 @@ export class MembershipsController {
   create(
     @Param('userId') userId: number,
     @Body() createMembershipDto: CreateMembershipDto,
-    @Request() req,
   ) {
-    const tokenUserId: number = req.user?.id;
-    if (tokenUserId && tokenUserId != userId) {
-      throw new UnauthorizedException(
-        'You do not have access to other users data. Please use your own user ID.',
-      );
-    }
     createMembershipDto.userId = userId;
     return this.membershipService.create(createMembershipDto);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, OwnershipGuard)
   @Get(':carId')
   @ApiOperation({ summary: 'Get a membership by user ID and car ID' })
   @ApiParam({ name: 'userId', type: Number })
@@ -58,19 +52,12 @@ export class MembershipsController {
   @ApiResponse({ status: 404, description: 'Membership not found' })
   findOne(
     @Param('userId') userId: number,
-    @Param('carId') carId: number,
-    @Request() req,
+    @Param('carId') carId: number
   ) {
-    const tokenUserId: number = req.user?.id;
-    if (tokenUserId && tokenUserId != userId) {
-      throw new UnauthorizedException(
-        'You do not have access to other users data. Please use your own user ID.',
-      );
-    }
     return this.membershipService.getByUserAndCar(userId, carId);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, OwnershipGuard)
   @Get()
   @ApiOperation({ summary: 'Get memberships of a user by UserID' })
   @ApiParam({ name: 'userId', type: Number })
@@ -80,17 +67,11 @@ export class MembershipsController {
     type: Membership,
   })
   @ApiResponse({ status: 404, description: 'Membership not found' })
-  findMany(@Param('userId') userId: number, @Request() req) {
-    const tokenUserId: number = req.user?.id;
-    if (tokenUserId && tokenUserId != userId) {
-      throw new UnauthorizedException(
-        'You do not have access to other users data. Please use your own user ID.',
-      );
-    }
+  findMany(@Param('userId') userId: number) {
     return this.membershipService.getByUser(userId);
   }
 
-  @UseGuards(PremiumUserGuard)
+  @UseGuards(PremiumUserGuard, OwnershipGuard)
   @Patch(':carId')
   @ApiOperation({ summary: 'Update a membership by ID' })
   @ApiParam({ name: 'id', type: Number })
@@ -103,15 +84,8 @@ export class MembershipsController {
   update(
     @Param('userId') userId: number,
     @Param('carId') carId: number,
-    @Body() updateMembershipDto: UpdateMembershipDto,
-    @Request() req,
+    @Body() updateMembershipDto: UpdateMembershipDto
   ) {
-    const tokenUserId: number = req.user?.id;
-    if (tokenUserId && tokenUserId != userId) {
-      throw new UnauthorizedException(
-        'You do not have access to other users data. Please use your own user ID.',
-      );
-    }
     updateMembershipDto.userId = userId;
     updateMembershipDto.carId = carId;
     return this.membershipService.update(updateMembershipDto);
