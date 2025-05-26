@@ -14,6 +14,7 @@ import { RootState } from '@/store/store';
 import axios from 'axios';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { CreateWashDto, Membership, WashResponse, WashType } from '@/types';
+import Button from '@/components/Button';
 
 export default function Index() {
   const { token, userId } = useSelector((state: RootState) => state.auth);
@@ -246,6 +247,7 @@ export default function Index() {
         onSuccess: () => {
           setRatingSubmitting(false);
           Alert.alert('Tak!', 'Din rating er modtaget.');
+          onNewWash();
         },
         onError: () => {
           setRatingSubmitting(false);
@@ -324,8 +326,6 @@ export default function Index() {
           autoCapitalize="characters"
         />
 
-        <Text>Aktive medlemskaber: {activeMemberships.length}</Text>
-
         {/* wash-type options */}
         {(!manualReg ? selectedMembership : true) && (
           <>
@@ -347,9 +347,10 @@ export default function Index() {
                   ]}
                   onPress={() => setSelectedWashTypeId(w.id)}
                 >
-                  <Text style={styles.washOptionText}>
-                    {w.type} – {isFree ? 'GRATIS' : `+${extraCost},-`}
-                  </Text>
+                  <View style={styles.washOptionText}>
+                    <Text>{w.type}</Text>
+                    <Text>{isFree ? 'GRATIS' : `+${extraCost},-`}</Text>
+                  </View>
                 </TouchableOpacity>
               );
             })}
@@ -417,13 +418,7 @@ export default function Index() {
             <Text style={styles.startButtonText}>Send rating</Text>
           )}
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.startButton,
-            { backgroundColor: '#10B981', marginTop: 12 },
-          ]}
-          onPress={onNewWash}
-        >
+        <TouchableOpacity style={[styles.startButton]} onPress={onNewWash}>
           <Text style={styles.startButtonText}>Start ny vask</Text>
         </TouchableOpacity>
       </View>
@@ -452,8 +447,6 @@ const styles = StyleSheet.create({
     color: '#111827',
   },
   picker: {
-    height: 100,
-    width: '100%',
     marginBottom: 12,
     backgroundColor: '#FFF',
   },
@@ -463,13 +456,24 @@ const styles = StyleSheet.create({
     color: '#6B7280',
   },
   textInput: {
-    height: 44,
-    borderColor: '#D1D5DB',
-    borderWidth: 1,
-    borderRadius: 6,
-    paddingHorizontal: 12,
-    backgroundColor: '#FFF',
-    marginBottom: 8,
+    fontSize: 16,
+    fontFamily: 'Inter-Regular',
+    color: 'black',
+    textAlign: 'left',
+    backgroundColor: '#fff',
+    borderStyle: 'solid',
+    borderColor: '#e5e5e5',
+    borderBottomWidth: 6,
+    flex: 1,
+    width: '100%',
+    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingInline: 10,
+    paddingBlock: 5,
+    marginVertical: 8,
+    textAlignVertical: 'center',
+    maxHeight: 50,
   },
   warningText: {
     color: '#B91C1C',
@@ -478,23 +482,26 @@ const styles = StyleSheet.create({
   washOption: {
     padding: 12,
     backgroundColor: '#FFF',
-    borderRadius: 6,
     marginBottom: 8,
+    borderWidth: 2,
+    borderColor: '#FFF',
   },
   washOptionSelected: {
-    borderColor: '#2563EB',
-    borderWidth: 2,
+    borderColor: '#06C167',
   },
   washOptionText: {
-    fontSize: 16,
-    color: '#1F2937',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
   startButton: {
-    marginTop: 20,
-    backgroundColor: '#2563EB',
-    paddingVertical: 14,
-    borderRadius: 6,
+    marginTop: 8,
+    backgroundColor: '#06C167',
+    borderBottomColor: '#198B47',
+    borderBottomWidth: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   startButtonText: {
     color: '#FFF',
