@@ -7,6 +7,7 @@ import {
   UseGuards,
   Request,
   UnauthorizedException,
+  Patch,
 } from '@nestjs/common';
 import { UserService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -39,8 +40,8 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Put(':id')
-  @ApiOperation({ summary: 'Update a user by ID' })
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update user information' })
   @ApiResponse({
     status: 200,
     description: 'User updated successfully',

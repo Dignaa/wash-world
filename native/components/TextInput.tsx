@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { StyleSheet, TextInput } from 'react-native';
 
 type InputProps = {
-  text: string;
+  text: string | undefined;
   placeholder: string;
-  onChange?: (text: string) => void;
+  onChange?: (text: any) => void;
   secureTextEntry?: boolean;
 };
 

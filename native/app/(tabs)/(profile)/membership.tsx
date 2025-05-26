@@ -1,25 +1,19 @@
-import { Location } from '@/types/location';
+import { Location } from '@/types';
 import { useRouter } from 'expo-router';
 
 import { AppDispatch, RootState } from '@/store/store';
 import React, { useEffect, useState } from 'react';
 import {
   Text,
-  TextInput,
   View,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  TouchableWithoutFeedback,
   ScrollView,
-  Keyboard,
   SafeAreaView,
   ActivityIndicator,
   Alert,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { Wash } from '@/types/wash';
-import { Membership, MembershipType } from '@/types/membership';
+import { MembershipType } from '@/types';
 import LicensePlateInput from '@/components/LicensePlateInput';
 import { Picker } from '@react-native-picker/picker';
 import NewMembershipCard from '@/components/NewMembershipCard';

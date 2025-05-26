@@ -8,6 +8,7 @@ type InputProps = {
 
 export default function licensePlateInput({ text, onChange }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
+  const [setText, setSetText] = useState('');
 
   const styles = StyleSheet.create({
     input: {
@@ -75,6 +76,16 @@ export default function licensePlateInput({ text, onChange }: InputProps) {
     },
   });
 
+  const handleChange = (input: string) => {
+    // Only allow up to 2 letters followed by up to 4 digits
+    const upperInput = input.toUpperCase();
+
+    // Match partial valid inputs while typing
+    if (/^[A-Z]{0,2}\d{0,4}$/.test(upperInput)) {
+      setSetText(upperInput);
+    }
+  };
+
   return (
     <View>
       <View style={[styles.licenseContainer, styles.frameFlexBox]}>
@@ -91,6 +102,8 @@ export default function licensePlateInput({ text, onChange }: InputProps) {
             placeholderTextColor="#e5e5e5"
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            maxLength={6}
+            autoCapitalize="characters"
           />
         </View>
       </View>

@@ -8,5 +8,5 @@ export class UpdateUserDto {
   phoneNumber: string;
 
   @ApiProperty({ example: 'john.doe@example.com' })
-  emailAddress: string;
+  email: string;
 }

@@ -28,7 +28,6 @@ export default function Profile() {
   const { token, loading, error, userId, username } = useSelector(
     (state: RootState) => state.auth,
   );
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
@@ -132,7 +131,7 @@ export default function Profile() {
         >
           <View style={styles.sectionWrapper}>
             <View style={styles.profileDetailsContainer}>
-              <Text style={[styles.name, styles.nameBox]}>{name}Matej</Text>
+              <Text style={[styles.name, styles.nameBox]}>{username}</Text>
               <Text style={[styles.email, styles.nameBox]}>{email}</Text>
             </View>
             <View style={styles.buttonWrapper}>
@@ -145,7 +144,7 @@ export default function Profile() {
                 />
                 <SecondaryButton
                   title="Update profile"
-                  onPress={async () => {}}
+                  link="/(tabs)/(profile)/profile"
                 />
               </View>
             </View>

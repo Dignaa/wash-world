@@ -7,6 +7,7 @@ import {
   ViewStyle,
   TextStyle,
   GestureResponderEvent,
+  ActivityIndicator,
 } from 'react-native';
 
 type ButtonProps = {
@@ -15,6 +16,7 @@ type ButtonProps = {
   onPress?: (event: GestureResponderEvent) => void;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  disabled?: boolean;
 };
 
 export default function Button({
@@ -23,6 +25,7 @@ export default function Button({
   onPress,
   style,
   textStyle,
+  disabled = false,
 }: ButtonProps) {
   // If a link is provided, wrap with expo-router’s Link
   if (link) {
@@ -42,8 +45,13 @@ export default function Button({
         pressed && styles.buttonPressed,
         style,
       ]}
+      disabled={disabled}
     >
-      <Text style={[styles.text, textStyle]}>{title}</Text>
+      {!disabled ? (
+        <Text style={[styles.text, textStyle]}>{title}</Text>
+      ) : (
+        <ActivityIndicator size="small" />
+      )}
     </Pressable>
   );
 }
