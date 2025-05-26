@@ -160,8 +160,8 @@ export default function Profile() {
                 <Link
                   key={membership.id}
                   href={{
-                    pathname: '/(tabs)/(profile)/[membershipId]',
-                    params: { membershipId: membership.id },
+                    pathname: '/(tabs)/(profile)/[carId]',
+                    params: { carId: membership.car.id },
                   }}
                   style={{ width: '100%' }}
                 >

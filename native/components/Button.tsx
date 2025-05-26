@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
   },
   buttonPressed: {
     opacity: 0.75,

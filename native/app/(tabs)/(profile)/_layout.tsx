@@ -6,10 +6,7 @@ export default function StackLayout() {
       <Stack.Screen name="index" options={{ title: 'Min Profil' }} />
       <Stack.Screen name="membership" options={{ title: 'New Membership' }} />
       <Stack.Screen name="profile" options={{ title: 'Update Profile' }} />
-      <Stack.Screen
-        name="[membershipId]"
-        options={{ title: 'Membership Details' }}
-      />
+      <Stack.Screen name="[carId]" options={{ title: 'Membership Details' }} />
     </Stack>
   );
 }
