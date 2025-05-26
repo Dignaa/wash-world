@@ -21,7 +21,7 @@ const initialState: AuthState = {
 type JwtPayload = {
   token: string;
   id: number;
-  name: string;
+  username: string;
 };
 
 interface LoggedInResponse {
@@ -49,7 +49,7 @@ export const login = createAsyncThunk<
     return {
       token: data.token,
       userId: decoded.id,
-      username: decoded.name,
+      username: decoded.username,
     };
   } catch (error: any) {
     return rejectWithValue(error.message);
@@ -87,7 +87,7 @@ export const checkAuth = createAsyncThunk<LoggedInResponse, void>(
       return {
         token: token,
         userId: decoded.id,
-        username: decoded.name,
+        username: decoded.username,
       };
     } catch (error: any) {
       return rejectWithValue(error.message);
