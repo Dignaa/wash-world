@@ -1,7 +1,7 @@
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Button from './Button';
-import { Location } from '@/types/location';
+import { Location } from '@/types';
 import { showLocation } from 'react-native-map-link';
 
 type CardProps = {

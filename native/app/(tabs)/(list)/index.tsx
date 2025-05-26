@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, View, StyleSheet, Text } from 'react-native';
 import * as Location from 'expo-location';
-import { Location as LocationType } from '@/types/location';
+import { Location as LocationType } from '@/types';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
 

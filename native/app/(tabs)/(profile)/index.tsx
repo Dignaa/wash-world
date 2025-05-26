@@ -20,8 +20,8 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { Wash } from '@/types/wash';
-import { Membership } from '@/types/membership';
+import { Wash } from '@/types';
+import { Membership } from '@/types';
 
 export default function Profile() {
   const dispatch = useDispatch<AppDispatch>();

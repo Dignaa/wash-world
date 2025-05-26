@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Text, StyleSheet, View, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 type CardProps = {
   membershipType: string;

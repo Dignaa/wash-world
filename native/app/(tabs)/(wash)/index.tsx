@@ -13,68 +13,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
 import axios from 'axios';
 import { useQuery, useMutation } from '@tanstack/react-query';
-
-interface Membership {
-  id: number;
-  start: string;
-  end: string;
-  user: {
-    id: number;
-    name: string | null;
-    phoneNumber: string | null;
-    email: string;
-    password: string;
-  };
-  car: {
-    id: number;
-    registrationNumber: string;
-  };
-  location: {
-    id: number;
-    address: string;
-    y: number;
-    x: number;
-    maxWheelWidth: number;
-    height: number;
-    selfWashes: number;
-    washHalls: number;
-    openTo: string;
-    openFrom: string;
-    imageUrl: string;
-    status: string;
-  };
-  membershipType: {
-    id: number;
-    type: string;
-    price: number;
-  };
-}
-
-interface WashType {
-  id: number;
-  type: string;
-  price: number;
-}
-
-// Adjusted DTO: either carId or licensePlate, and userId can be null
-interface CreateWashDto {
-  carId?: number;
-  licensePlate?: string;
-  userId: number | null;
-  locationId: number;
-  washTypeId: number;
-}
-
-interface WashResponse {
-  id: number;
-  carId: number;
-  userId: number | null;
-  locationId: number;
-  time: string;
-  washTypeId: number;
-  emergencyStop: boolean;
-  rating?: number;
-}
+import { CreateWashDto, Membership, WashResponse, WashType } from '@/types';
 
 export default function Index() {
   const { token, userId } = useSelector((state: RootState) => state.auth);
