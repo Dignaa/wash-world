@@ -9,7 +9,6 @@ import { AppDispatch, RootState } from '@/store/store';
 import { useEffect, useState } from 'react';
 import {
   Text,
-  TextInput,
   View,
   StyleSheet,
   KeyboardAvoidingView,
@@ -17,7 +16,6 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Keyboard,
-  SafeAreaView,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Wash } from '@/types';
@@ -37,7 +35,7 @@ export default function Profile() {
 
   useEffect(() => {
     dispatch(checkAuth());
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -121,10 +119,10 @@ export default function Profile() {
     }
   };
 
-  if (token) {
+  if (token && userId) {
     // Logged in Users profile page
     return (
-      <SafeAreaView style={styles.main}>
+      <View style={styles.main}>
         {/* Profile Details section */}
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -204,7 +202,7 @@ export default function Profile() {
             )}
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </View>
     );
   }
 

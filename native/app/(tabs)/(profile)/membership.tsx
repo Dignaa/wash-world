@@ -1,6 +1,5 @@
 import { Location } from '@/types';
 import { useRouter } from 'expo-router';
-
 import { AppDispatch, RootState } from '@/store/store';
 import React, { useEffect, useState } from 'react';
 import {
@@ -8,7 +7,6 @@ import {
   View,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   ActivityIndicator,
   Alert,
 } from 'react-native';
@@ -20,19 +18,10 @@ import NewMembershipCard from '@/components/NewMembershipCard';
 import Button from '@/components/Button';
 import { checkAuth } from '@/store/authSlice';
 
-interface CreateMembershipDTO {
-  locationId: number;
-  typeId: number;
-  licensePlate: string;
-  userId?: string | null;
-}
-
 export default function Profile() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
-  const { token, loading, error, userId, username } = useSelector(
-    (state: RootState) => state.auth,
-  );
+  const { token, userId } = useSelector((state: RootState) => state.auth);
   const [licensePlate, setLicensePlate] = useState('');
   const [locations, setLocations] = useState<Location[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<number | null>(null);
@@ -140,16 +129,16 @@ export default function Profile() {
 
   if (loadingMembershipTypes || loadingLocations) {
     return (
-      <SafeAreaView style={styles.main}>
-        <ActivityIndicator size="large" color="#0000ff" />
+      <View style={styles.main}>
+        <ActivityIndicator size="large" />
         <Text>Loading data...</Text>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (token) {
     return (
-      <SafeAreaView style={styles.main}>
+      <View style={styles.main}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
@@ -267,7 +256,7 @@ export default function Profile() {
             </View>
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </View>
     );
   }
 }

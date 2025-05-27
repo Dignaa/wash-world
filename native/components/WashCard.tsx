@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Text, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 type CardProps = {
   car: string;
@@ -18,7 +17,7 @@ export default function WashCard({
   car,
 }: CardProps) {
   return (
-    <SafeAreaView style={styles.card}>
+    <View style={styles.card}>
       <View style={styles.cardGroup}>
         <View style={styles.locationParent}>
           <Text style={styles.location}>{location}</Text>
@@ -33,7 +32,7 @@ export default function WashCard({
           </Text>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

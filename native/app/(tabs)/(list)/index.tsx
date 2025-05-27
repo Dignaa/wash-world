@@ -1,4 +1,3 @@
-// app/index.tsx
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, View, StyleSheet, Text } from 'react-native';
 import * as Location from 'expo-location';
@@ -11,6 +10,7 @@ export default function Index() {
   const [loading, setLoading] = useState(false);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
 
+  // Effects
   useEffect(() => {
     const fetch = async () => {
       const data = await fetchLocations();
@@ -34,7 +34,6 @@ export default function Index() {
       setLoading(false);
     }
   };
-
   const initLocationIfAllowed = async (data: LocationType[]) => {
     let { status } = await Location.getForegroundPermissionsAsync();
 
@@ -68,7 +67,7 @@ export default function Index() {
     setLocations(withDistances);
   };
 
-  // Haversine formula by chatgpt (straight line from a to b (no roads))
+  // Haversine formula (straight line from a to b (no roads))
   const getDistance = (
     lat1: number,
     lon1: number,

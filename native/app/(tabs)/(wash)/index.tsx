@@ -11,38 +11,48 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/store';
-import axios from 'axios';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { CreateWashDto, Membership, WashResponse, WashType } from '@/types';
-import Button from '@/components/Button';
+import { useMemberships } from '@/hooks/useMemberships';
+import { useWashTypes } from '@/hooks/useWashTypes';
+import { useCreateWash } from '@/hooks/useCreateWash';
+import { useUpdateWash } from '@/hooks/useUpdateWash';
+import { CreateWashDto, Membership, WashType } from '@/types';
 
 export default function Index() {
-  const { token, userId } = useSelector((state: RootState) => state.auth);
-  const baseUrl = process.env.EXPO_PUBLIC_API_URL;
+  const { userId } = useSelector((state: RootState) => state.auth);
 
-  // ── 1) Fetch memberships ─────────────────────────────────────────────
   const {
     data: memberships,
     isLoading: membershipsLoading,
     isError: membershipsError,
     error: membershipsErrorObj,
-  } = useQuery<Membership[]>({
-    queryKey: ['memberships', userId],
-    queryFn: async () => {
-      const resp = await axios.get<Membership[]>(
-        `${baseUrl}user/${userId}/memberships/`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
-      return resp.data;
-    },
-    enabled: Boolean(token && userId),
-    staleTime: 1000 * 60 * 5,
-  });
+  } = useMemberships();
 
-  // Active only
-  const activeMemberships = useMemo(() => {
+  const {
+    data: washTypes,
+    isLoading: washTypesLoading,
+    isError: washTypesError,
+    error: washTypesErrorObj,
+  } = useWashTypes();
+
+  const createWashMutation = useCreateWash();
+  const updateWashMutation = useUpdateWash();
+
+  // State
+  const [pickedReg, setPickedReg] = useState<string>('');
+  const [manualReg, setManualReg] = useState<string>('');
+  const [selectedWashTypeId, setSelectedWashTypeId] = useState<number | null>(
+    null,
+  );
+  const [isWashing, setIsWashing] = useState(false);
+  const [countdown, setCountdown] = useState<number>(300);
+  const [timerId, setTimerId] = useState<number | null>(null);
+  const [washId, setWashId] = useState<number | null>(null);
+  const [washStopped, setWashStopped] = useState(false);
+  const [showRatingInput, setShowRatingInput] = useState(false);
+  const [rating, setRating] = useState<number>(0);
+  const [ratingSubmitting, setRatingSubmitting] = useState(false);
+
+  const activeMemberships: Membership[] = (() => {
     if (!memberships) return [];
     const now = new Date();
     return memberships.filter((m) => {
@@ -50,125 +60,42 @@ export default function Index() {
       const endDate = new Date(m.end);
       return startDate <= now && now <= endDate;
     });
-  }, [memberships]);
+  })();
 
-  // ── 2) Fetch wash‐types ─────────────────────────────────────────────
-  const {
-    data: washTypes,
-    isLoading: washTypesLoading,
-    isError: washTypesError,
-    error: washTypesErrorObj,
-  } = useQuery<WashType[]>({
-    queryKey: ['washTypes'],
-    queryFn: async () => {
-      const resp = await axios.get<WashType[]>(`${baseUrl}wash-types`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return resp.data;
-    },
-    staleTime: 1000 * 60 * 5,
-  });
+  const selectedMembership: Membership | null =
+    activeMemberships.find((m) => m.car.registrationNumber === pickedReg) ??
+    null;
 
-  // ── 3) Local state ────────────────────────────────────────────────────
-  const [pickedReg, setPickedReg] = useState<string>('');
-  const [manualReg, setManualReg] = useState<string>('');
-  const [selectedWashTypeId, setSelectedWashTypeId] = useState<number | null>(
-    null,
-  );
+  const freeWashType: WashType | null =
+    selectedMembership && washTypes
+      ? (washTypes.find(
+          (w) =>
+            w.type.toLowerCase() ===
+            selectedMembership.membershipType.type.toLowerCase(),
+        ) ?? null)
+      : null;
 
-  const [isWashing, setIsWashing] = useState(false);
-  const [countdown, setCountdown] = useState<number>(300);
-  const [timerId, setTimerId] = useState<number | null>(null);
-
-  const [washId, setWashId] = useState<number | null>(null);
-  const [washStopped, setWashStopped] = useState(false);
-  const [showRatingInput, setShowRatingInput] = useState(false);
-  const [rating, setRating] = useState<number>(0);
-  const [ratingSubmitting, setRatingSubmitting] = useState(false);
-
-  const onNewWash = () => {
-    setShowRatingInput(false);
-    setWashStopped(false);
-    setWashId(null);
-    setPickedReg('');
-    setManualReg('');
-    setSelectedWashTypeId(null);
-    setRating(0);
-    setIsWashing(false);
-  };
-
+  // Effects
+  // reset component when auth changes
   useEffect(() => {
     onNewWash();
-  }, [userId, token]);
-
-  // ── 4) Derive “selectedMembership” from dropdown only ──
-  const selectedMembership = useMemo<Membership | null>(() => {
-    if (!activeMemberships.length) return null;
-    return (
-      activeMemberships.find((m) => m.car.registrationNumber === pickedReg) ||
-      null
-    );
-  }, [pickedReg, activeMemberships]);
-
-  // ── 5) Which washType is “free” ─────────────────────────────────────
-  const freeWashType: WashType | null = useMemo(() => {
-    if (!selectedMembership || !washTypes) return null;
-    return (
+  }, [userId]);
+  // set the default wash‑type when membership changes
+  useEffect(() => {
+    if (!selectedMembership || !washTypes) return;
+    const free =
       washTypes.find(
         (w) =>
           w.type.toLowerCase() ===
           selectedMembership.membershipType.type.toLowerCase(),
-      ) || null
-    );
+      ) ?? null;
+    if (free) setSelectedWashTypeId(free.id);
   }, [selectedMembership, washTypes]);
-
-  useEffect(() => {
-    if (freeWashType) {
-      setSelectedWashTypeId(freeWashType.id);
-    }
-  }, [freeWashType]);
-
-  // ── 6) Create wash mutation ───────────────────────────────────────────
-  const createWashMutation = useMutation<WashResponse, unknown, CreateWashDto>({
-    mutationFn: async (newWashDto) => {
-      const resp = await axios.post<WashResponse>(
-        `${baseUrl}wash`,
-        newWashDto,
-        {
-          headers: { Authorization: token ? `Bearer ${token}` : '' },
-        },
-      );
-      return resp.data;
-    },
-    onSuccess: (data) => {
-      setWashId(data.id);
-    },
-    onError: (err) => {
-      console.log(err);
-    },
-  });
-
-  // ── 7) Update wash mutation ───────────────────────────────────────────
-  const updateWashMutation = useMutation<
-    WashResponse,
-    unknown,
-    { washId: number; payload: { emergencyStop?: boolean; rating?: number } }
-  >({
-    mutationFn: async ({ washId, payload }) => {
-      const resp = await axios.patch<WashResponse>(
-        `${baseUrl}wash/${washId}`,
-        payload,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      return resp.data;
-    },
-  });
-
-  // ── 8) Timer effect ─────────────────────────────────────────────────
+  // timer handling
   useEffect(() => {
     if (washId !== null && !washStopped) {
       setIsWashing(true);
-      setCountdown(300);
+      setCountdown(300); //300sec = 5min
       const id = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
@@ -185,12 +112,20 @@ export default function Index() {
     return () => {
       if (timerId !== null) clearInterval(timerId);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [washId]);
 
-  // ── 9) Start wash handler ────────────────────────────────────────────
-  const onStartVask = () => {
-    // require either dropdown or manual:
+  // Handelers
+  function onNewWash() {
+    setShowRatingInput(false);
+    setWashStopped(false);
+    setWashId(null);
+    setPickedReg('');
+    setManualReg('');
+    setSelectedWashTypeId(null);
+    setRating(0);
+    setIsWashing(false);
+  }
+  function onStartVask() {
     if (!pickedReg && !manualReg) {
       Alert.alert(
         'Fejl',
@@ -203,24 +138,21 @@ export default function Index() {
       return;
     }
 
-    // build DTO
     const isManual = Boolean(manualReg);
     const dto: CreateWashDto = {
       ...(isManual
         ? { licensePlate: manualReg.trim().toUpperCase() }
         : { carId: selectedMembership!.car.id }),
-      userId: userId || null,
-      locationId: selectedMembership!
-        ? selectedMembership.location.id
-        : /* fallback location */ 4,
+      userId,
+      locationId: selectedMembership ? selectedMembership.location.id : 4,
       washTypeId: selectedWashTypeId,
     };
 
-    createWashMutation.mutate(dto);
-  };
-
-  // ── 10) Stop wash ────────────────────────────────────────────────────
-  const onStopVask = () => {
+    createWashMutation.mutate(dto, {
+      onSuccess: (data) => setWashId(data.id),
+    });
+  }
+  function onStopVask() {
     if (washId === null) return;
     if (timerId !== null) clearInterval(timerId);
     setCountdown(0);
@@ -228,14 +160,9 @@ export default function Index() {
     setShowRatingInput(true);
     setWashStopped(true);
 
-    updateWashMutation.mutate({
-      washId,
-      payload: { emergencyStop: true },
-    });
-  };
-
-  // ── 11) Submit rating ────────────────────────────────────────────────
-  const onSubmitRating = () => {
+    updateWashMutation.mutate({ washId, payload: { emergencyStop: true } });
+  }
+  function onSubmitRating() {
     if (washId === null || rating < 1 || rating > 5) {
       Alert.alert('Fejl', 'Indtast venligst en rating mellem 1 og 5.');
       return;
@@ -255,9 +182,9 @@ export default function Index() {
         },
       },
     );
-  };
+  }
 
-  // ── 12) Loading / Error ──────────────────────────────────────────────
+  // Errors
   if (membershipsLoading || washTypesLoading) {
     return (
       <View style={styles.centered}>
@@ -287,7 +214,7 @@ export default function Index() {
     );
   }
 
-  // ── 13) UI: Before wash starts ────────────────────────────────────────
+  // Before wash starts
   if (!isWashing && !showRatingInput) {
     return (
       <View style={styles.container}>
@@ -371,8 +298,7 @@ export default function Index() {
       </View>
     );
   }
-
-  // ── 14) Washing ───────────────────────────────────────────────────────
+  // Washing
   if (isWashing) {
     const minutes = Math.floor(countdown / 60)
       .toString()
@@ -390,8 +316,7 @@ export default function Index() {
       </View>
     );
   }
-
-  // ── 15) Rating ────────────────────────────────────────────────────────
+  // Rating
   if (showRatingInput) {
     return (
       <View style={styles.container}>
@@ -424,8 +349,6 @@ export default function Index() {
       </View>
     );
   }
-
-  return null;
 }
 
 const styles = StyleSheet.create({
