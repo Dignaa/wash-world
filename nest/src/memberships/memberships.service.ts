@@ -5,7 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Membership } from './entities/membership.entity';
 import { User } from '../users/entities/user.entity';
+import { ExtendMembershipDto } from './dto/extend-membership.dto';
 import { Car } from 'src/cars/entities/car.entity';
+import { MembershipType } from '../membership-types/entities/membership-type.entity';
 
 @Injectable()
 export class MembershipService {
@@ -89,5 +91,63 @@ export class MembershipService {
       updateMembershipDto,
     );
     return this.membershipRepository.save(updatedMembership);
+  }
+
+  async extendMembership(
+    id: number,
+    extendDto: ExtendMembershipDto,
+  ): Promise<Membership> {
+    const membership = await this.membershipRepository.findOne({
+      where: { id },
+      relations: ['user', 'car', 'membershipType', 'location'],
+    });
+
+    if (!membership) {
+      throw new HttpException('Membership not found', 404);
+    }
+
+    const currentEnd = new Date(membership.end);
+    const newEnd = new Date(extendDto.newEndDate);
+
+    if (newEnd <= currentEnd) {
+      throw new HttpException(
+        'New end date must be after current end date',
+        400,
+      );
+    }
+
+    membership.end = newEnd;
+    return this.membershipRepository.save(membership);
+  }
+
+  async upgradeMembership(
+    id: number,
+    newTypeId: number,
+  ): Promise<Membership> {
+    const membership = await this.membershipRepository.findOne({
+      where: { id },
+      relations: ['membershipType', 'user', 'car', 'location'],
+    });
+
+    console.log("ID", newTypeId)
+    if (!membership) {
+      throw new HttpException('Membership not found', 404);
+    }
+
+    const newType = await this.membershipRepository.manager.findOne(MembershipType, {
+      where: { id: newTypeId },
+    });
+
+    if (!newType) {
+      throw new HttpException('Membership type not found', 404);
+    }
+
+    if (newType.price <= membership.membershipType.price) {
+      throw new HttpException('New membership must be an upgrade', 400);
+    }
+
+    membership.membershipType = newType;
+
+    return this.membershipRepository.save(membership);
   }
 }
