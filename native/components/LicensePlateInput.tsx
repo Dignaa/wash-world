@@ -58,6 +58,7 @@ export default function licensePlateInput({ text, onChange }: InputProps) {
       backgroundColor: '#335ab3',
       paddingHorizontal: 4,
       height: '100%',
+      width: 55,
       justifyContent: 'center',
       overflow: 'hidden',
     },

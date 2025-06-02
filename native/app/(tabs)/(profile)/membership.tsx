@@ -138,121 +138,99 @@ export default function Profile() {
 
   if (token) {
     return (
-      <View style={styles.main}>
+      <View>
         <ScrollView
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
         >
-          <View style={[styles.memberships, styles.locationFlexBox]}>
-            <View style={styles.membershipsLabel}>
-              <Text style={[styles.membership, styles.cart1Typo]}>
-                License Plate
-              </Text>
-            </View>
-            <LicensePlateInput text={licensePlate} onChange={setLicensePlate} />
-          </View>
-          <View style={[styles.location, styles.locationFlexBox]}>
-            <View style={styles.licensePlateParent}>
-              <View style={[styles.locationLabel, styles.parentFlexBox]}>
-                <Text style={[styles.location1, styles.location1Typo]}>
-                  Location
+          <View style={styles.main}>
+            <View style={[styles.memberships, styles.locationFlexBox]}>
+              <View style={styles.membershipsLabel}>
+                <Text style={[styles.membership, styles.cart1Typo]}>
+                  License Plate
                 </Text>
-                <Text style={styles.closest}>Closest</Text>
               </View>
-              <Picker
-                selectedValue={selectedLocation}
-                onValueChange={(val) => {
-                  setSelectedLocation(val);
-                }}
-                style={styles.dropdown}
-              >
-                <Picker.Item
-                  label="Choose washstation"
-                  value={null}
-                  style={styles.ab12345}
-                />
-                {locations.map((loc) => (
+              <LicensePlateInput
+                text={licensePlate}
+                onChange={setLicensePlate}
+              />
+            </View>
+            <View style={[styles.location, styles.locationFlexBox]}>
+              <View style={styles.licensePlateParent}>
+                <View style={[styles.locationLabel, styles.parentFlexBox]}>
+                  <Text style={[styles.location1, styles.location1Typo]}>
+                    Location
+                  </Text>
+                </View>
+                <Picker
+                  selectedValue={selectedLocation}
+                  onValueChange={(val) => {
+                    setSelectedLocation(val);
+                  }}
+                  style={styles.dropdown}
+                >
                   <Picker.Item
-                    key={loc.id}
-                    label={loc.address}
-                    value={loc.id}
-                    style={styles.kr}
+                    label="Choose washstation"
+                    value={null}
+                    style={styles.ab12345}
+                  />
+                  {locations.map((loc) => (
+                    <Picker.Item
+                      key={loc.id}
+                      label={loc.address}
+                      value={loc.id}
+                      style={styles.kr}
+                    />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+            <View style={[styles.memberships, styles.locationFlexBox]}>
+              <View style={styles.membershipsLabel}>
+                <Text style={[styles.membership, styles.cart1Typo]}>
+                  Membership
+                </Text>
+              </View>
+              {!loadingMembershipTypes &&
+                membershipTypes.length > 0 &&
+                membershipTypes.map((membership) => (
+                  <NewMembershipCard
+                    key={membership.id}
+                    membershipType={membership.type}
+                    price={membership.price}
+                    selected={selectedMembershipType?.id === membership.id}
+                    onPress={() => {
+                      setSelectedMembershipType(membership);
+                    }}
                   />
                 ))}
-              </Picker>
             </View>
-          </View>
-          <View style={[styles.memberships, styles.locationFlexBox]}>
-            <View style={styles.membershipsLabel}>
-              <Text style={[styles.membership, styles.cart1Typo]}>
-                Membership
-              </Text>
-            </View>
-            {!loadingMembershipTypes &&
-              membershipTypes.length > 0 &&
-              membershipTypes.map((membership) => (
-                <NewMembershipCard
-                  key={membership.id}
-                  membershipType={membership.type}
-                  price={membership.price}
-                  selected={selectedMembershipType?.id === membership.id}
-                  onPress={() => {
-                    setSelectedMembershipType(membership);
-                  }}
+            <View style={[styles.memberships, styles.locationFlexBox]}>
+              <View style={styles.membershipsLabel}>
+                <Text style={[styles.membership, styles.cart1Typo]}>Cart</Text>
+              </View>
+              <View style={styles.cartCard}>
+                <View style={styles.totalFlexBox}>
+                  <View style={styles.brilliantAllInclusiveParent}>
+                    <Text style={[styles.brilliantAll, styles.brilliantTypo]}>
+                      {selectedMembershipType?.type}
+                    </Text>
+                  </View>
+                  <View style={[styles.krWrapper, styles.krWrapperFlexBox]}>
+                    <Text style={[styles.kr, styles.dkTypo]}>
+                      {selectedMembershipType?.price ??
+                        '' + (selectedMembershipType ? '  kr.' : '')}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+              <View style={[styles.pay, styles.parentFlexBox]}>
+                <Button
+                  title="Pay"
+                  onPress={handleSubmit}
+                  style={styles.button}
                 />
-              ))}
-          </View>
-          <View style={styles.licensePlateParent}>
-            <Text style={styles.cart1Typo}>Cart</Text>
-            <View style={styles.cartCard}>
-              <View style={styles.totalFlexBox}>
-                <View style={styles.brilliantAllInclusiveParent}>
-                  <Text style={[styles.brilliantAll, styles.brilliantTypo]}>
-                    Brilliant / All inclusive
-                  </Text>
-                  <Text style={[styles.inPeriod15, styles.krmndTypo]}>
-                    In period 15 May - 14 June 2025
-                  </Text>
-                </View>
-                <View style={[styles.krWrapper, styles.krWrapperFlexBox]}>
-                  <Text style={[styles.kr, styles.dkTypo]}>199 kr.</Text>
-                </View>
               </View>
-              <View style={styles.totalFlexBox}>
-                <View style={styles.signUpFeeWrapper}>
-                  <Text style={[styles.brilliantAll, styles.brilliantTypo]}>
-                    Sign-up fee
-                  </Text>
-                </View>
-                <View style={[styles.krWrapper, styles.krWrapperFlexBox]}>
-                  <Text style={[styles.kr, styles.dkTypo]}>99 kr.</Text>
-                </View>
-              </View>
-              <View style={styles.totalFlexBox}>
-                <View style={styles.signUpFeeWrapper}>
-                  <Text style={[styles.brilliantAll, styles.brilliantTypo]}>
-                    Tax 25%
-                  </Text>
-                </View>
-                <View style={[styles.krWrapper, styles.krWrapperFlexBox]}>
-                  <Text style={[styles.kr, styles.dkTypo]}>74,75 kr.</Text>
-                </View>
-              </View>
-              <View style={[styles.total, styles.totalFlexBox]}>
-                <View style={styles.signUpFeeWrapper}>
-                  <Text style={[styles.taxes1, styles.kr3Typo]}>To pay</Text>
-                </View>
-                <View style={[styles.krWrapper, styles.krWrapperFlexBox]}>
-                  <Text style={[styles.kr3, styles.dkTypo]}>373,75 kr.</Text>
-                </View>
-              </View>
-            </View>
-            <View style={[styles.pay, styles.parentFlexBox]}>
-              <Button
-                title="Pay"
-                onPress={handleSubmit}
-                style={styles.button}
-              />
             </View>
           </View>
         </ScrollView>
@@ -294,42 +272,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 18,
   },
-  frameGroupBorder: {
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    borderBottomWidth: 4,
-    borderRadius: 4,
-    gap: 0,
-    justifyContent: 'space-between',
-    borderStyle: 'solid',
-    flexDirection: 'row',
-    overflow: 'hidden',
-    alignItems: 'center',
-  },
-  kr3Typo: {
-    fontFamily: 'Inter-Bold',
-    fontWeight: '700',
-  },
   brilliantTypo: {
     fontSize: 18,
     textAlign: 'left',
   },
-  krmndFlexBox: {
-    justifyContent: 'flex-end',
-    flexDirection: 'row',
-    gap: 8,
-    alignItems: 'center',
-  },
-  krmndTypo: {
-    fontSize: 14,
-    fontFamily: 'Inter-Regular',
-    textAlign: 'left',
-  },
-  krmnd1Clr: {
-    color: '#343434',
-    textAlign: 'left',
-  },
-  frameChildLayout: {},
   totalFlexBox: {
     width: 337,
     gap: 0,
@@ -337,76 +283,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  licensePlate1: {
-    height: 22,
-    alignSelf: 'stretch',
-  },
-  dk: {
-    color: '#fff',
-    fontFamily: 'Inter-Regular',
-  },
-  dkWrapper: {
-    backgroundColor: '#335ab3',
-    width: 36,
-    paddingHorizontal: 3,
-    paddingVertical: 12,
-    overflow: 'hidden',
-    justifyContent: 'center',
-  },
+
   ab12345: {
     color: '#e5e5e5',
     fontFamily: 'Inter-Regular',
   },
-  ab12345Wrapper: {
-    paddingHorizontal: 6,
-    paddingVertical: 0,
-    borderBottomWidth: 6,
-    borderColor: '#e5e5e5',
-    borderStyle: 'solid',
-    overflow: 'hidden',
-    justifyContent: 'center',
-    flex: 1,
-    alignSelf: 'stretch',
-  },
-  frameParent: {
-    borderTopLeftRadius: 4,
-    borderBottomLeftRadius: 4,
-    overflow: 'hidden',
-    height: 40,
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    alignSelf: 'stretch',
-  },
+
   licensePlateParent: {
     gap: 8,
-    alignSelf: 'stretch',
-  },
-  licensePlate: {
-    paddingVertical: 8,
-    paddingHorizontal: 0,
-    justifyContent: 'center',
     alignSelf: 'stretch',
   },
   location1: {
     height: 22,
     flex: 1,
   },
-  closest: {
-    textDecorationLine: 'underline',
-    color: '#06c167',
-    fontFamily: 'Inter-Regular',
-    fontSize: 16,
-    textAlign: 'left',
-  },
-  locationSharpIcon: {
-    overflow: 'hidden',
-  },
   locationLabel: {
-    alignSelf: 'stretch',
-  },
-  vectorIcon: {},
-  chevronDownSharp: {
-    flex: 1,
     alignSelf: 'stretch',
   },
   dropdown: {
@@ -444,63 +335,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 18,
   },
-  allInclusive: {
-    color: '#fff',
-    fontFamily: 'Inter-Regular',
-    textAlign: 'left',
-  },
-  brilliantParent: {
-    gap: 4,
-  },
 
-  krmnd: {
-    color: '#fff',
-  },
-  krmndParent: {
-    flex: 1,
-  },
-  frameGroup: {
-    borderColor: '#198b47',
-    backgroundColor: '#06c167',
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    alignSelf: 'stretch',
-  },
-  membershipTypeSelcetedInner: {
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#e5e5e5',
-    borderStyle: 'solid',
-    alignSelf: 'stretch',
-  },
-  membershipTypeSelceted: {
-    borderRadius: 8,
-    width: 361,
-    paddingVertical: 6,
-    paddingHorizontal: 0,
-  },
-  premium: {
-    fontSize: 16,
-    fontFamily: 'Inter-Bold',
-    fontWeight: '700',
-  },
-  krmnd1: {
-    fontSize: 13,
-    fontFamily: 'Inter-Regular',
-  },
-  frameChild: {
-    borderRadius: 50,
-    backgroundColor: '#fff',
-    width: 22,
-  },
-  krmndGroup: {
-    width: 171,
-  },
-  membershipTypeGrey: {
-    backgroundColor: '#e5e5e5',
-    width: 350,
-    borderColor: '#e5e5e5',
-  },
   memberships: {
     gap: 8,
     justifyContent: 'center',
@@ -510,9 +345,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     color: '#000',
   },
-  inPeriod15: {
-    color: '#000',
-  },
+
   brilliantAllInclusiveParent: {
     gap: 4,
     justifyContent: 'center',
@@ -520,30 +353,11 @@ const styles = StyleSheet.create({
   kr: {
     fontFamily: 'Inter-Regular',
     color: '#000',
+    width: '100%',
   },
   krWrapper: {
     paddingVertical: 10,
     overflow: 'hidden',
-    paddingHorizontal: 0,
-  },
-  signUpFeeWrapper: {
-    justifyContent: 'center',
-  },
-  taxes1: {
-    textAlign: 'left',
-    color: '#000',
-    fontSize: 18,
-  },
-  kr3: {
-    color: '#000',
-    fontFamily: 'Inter-Bold',
-    fontWeight: '700',
-  },
-  total: {
-    borderColor: '#000',
-    borderTopWidth: 1,
-    paddingVertical: 4,
-    borderStyle: 'solid',
     paddingHorizontal: 0,
   },
   cartCard: {
@@ -573,7 +387,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f7f7f7',
     width: '100%',
     padding: 16,
-    gap: 40,
+    gap: 30,
     flex: 1,
     alignSelf: 'stretch',
   },
