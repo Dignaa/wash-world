@@ -35,17 +35,12 @@ export class WashService {
       }
     }
 
-    if (createWashDto.userId) {
-      createWashDto.userId = createWashDto.userId;
-    } else {
-      createWashDto.userId = undefined;
-    }
-
     const washData = this.washRepository.create({
       time: new Date(),
       rating: createWashDto.rating,
       emergencyStop: createWashDto.emergencyStop,
       car: { id: createWashDto.carId },
+      user: { id: createWashDto.userId },
       location: { id: createWashDto.locationId },
       washType: { id: createWashDto.washTypeId },
     });

@@ -9,7 +9,6 @@ import { AppDispatch, RootState } from '@/store/store';
 import { useEffect, useState } from 'react';
 import {
   Text,
-  TextInput,
   View,
   StyleSheet,
   KeyboardAvoidingView,
@@ -17,7 +16,6 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Keyboard,
-  SafeAreaView,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Wash } from '@/types';
@@ -30,6 +28,8 @@ export default function Profile() {
     (state: RootState) => state.auth,
   );
   const [email, setEmail] = useState('');
+  const [isValidEmail, setIsValidEmail] = useState(true);
+
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [memberships, setMemberships] = useState<Membership[]>([]);
@@ -37,7 +37,7 @@ export default function Profile() {
 
   useEffect(() => {
     dispatch(checkAuth());
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -48,12 +48,16 @@ export default function Profile() {
 
   const handleSubmit = async () => {
     await SecureStore.setItemAsync('userPassword', password);
-    if (isLogin) {
-      await dispatch(login({ email, password }));
-      await fetchMemberships();
-      await fetchWashes();
+    if (email && password) {
+      if (isLogin) {
+        await dispatch(login({ email, password }));
+      } else {
+        await dispatch(signup({ email, password }));
+      }
     } else {
-      await dispatch(signup({ email, password }));
+      alert(
+        'Please fill the details before ' + (isLogin ? 'log in' : 'sign up'),
+      );
     }
   };
 
@@ -121,10 +125,10 @@ export default function Profile() {
     }
   };
 
-  if (token) {
+  if (token && userId) {
     // Logged in Users profile page
     return (
-      <SafeAreaView style={styles.main}>
+      <View style={styles.main}>
         {/* Profile Details section */}
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -160,8 +164,8 @@ export default function Profile() {
                 <Link
                   key={membership.id}
                   href={{
-                    pathname: '/(tabs)/(profile)/[membershipId]',
-                    params: { membershipId: membership.id },
+                    pathname: '/(tabs)/(profile)/[carId]',
+                    params: { carId: membership.car.id },
                   }}
                   style={{ width: '100%' }}
                 >
@@ -204,7 +208,7 @@ export default function Profile() {
             )}
           </View>
         </ScrollView>
-      </SafeAreaView>
+      </View>
     );
   }
 
@@ -229,6 +233,8 @@ export default function Profile() {
             text={email}
             onChange={setEmail}
             placeholder="Email"
+            validateEmail
+            onValidationError={setIsValidEmail}
           />
           <CustomTextInput
             text={password}
@@ -236,6 +242,7 @@ export default function Profile() {
             placeholder="Password"
             secureTextEntry={true}
           />
+          {error && <Text style={{ color: 'red' }}>{error}</Text>}
           <Button
             title={isLogin ? 'Login' : 'Sign Up'}
             onPress={handleSubmit}
@@ -252,7 +259,6 @@ export default function Profile() {
             />
             {loading && <Text>Loading...</Text>}
           </View>
-          {error && <Text>{error}</Text>}
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

@@ -2,12 +2,11 @@ import { AppDispatch, RootState } from '@/store/store';
 import React, { useEffect, useState } from 'react';
 import {
   Text,
-  View,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   ActivityIndicator,
   Alert,
+  View,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@/components/Button';
@@ -18,9 +17,7 @@ import { router } from 'expo-router';
 
 export default function Profile() {
   const dispatch = useDispatch<AppDispatch>();
-  const { token, loading, error, userId, username } = useSelector(
-    (state: RootState) => state.auth,
-  );
+  const { token, userId } = useSelector((state: RootState) => state.auth);
   const [name, setName] = useState<string | undefined>('');
   const [email, setEmail] = useState<string | undefined>('');
   const [phoneNumber, setPhoneNumber] = useState<string | undefined>('');
@@ -96,17 +93,17 @@ export default function Profile() {
     }
   };
 
-  if (token) {
+  if (token && userId) {
     if (dataLoading) {
       return (
-        <SafeAreaView style={styles.main}>
-          <ActivityIndicator style={styles.locationFlexBox} />
+        <View style={styles.main}>
+          <ActivityIndicator size="large" style={styles.locationFlexBox} />
           <Text style={styles.label}>Loading user data...</Text>
-        </SafeAreaView>
+        </View>
       );
     }
     return (
-      <SafeAreaView style={styles.main}>
+      <View style={styles.main}>
         <ScrollView
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
@@ -133,7 +130,7 @@ export default function Profile() {
           ></CustomTextInput>
           <Button title="Update" onPress={handleSubmit} disabled={submitting} />
         </ScrollView>
-      </SafeAreaView>
+      </View>
     );
   }
 }

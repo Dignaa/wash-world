@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Text, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 type CardProps = {
   membershipType: string;
@@ -14,7 +13,7 @@ export default function MembershipCard({
   licensePlate,
 }: CardProps) {
   return (
-    <SafeAreaView style={styles.card}>
+    <View style={styles.card}>
       <View style={[styles.frameGroup, styles.frameFlexBox]}>
         <View style={styles.brilliantParent}>
           <Text style={[styles.membership, styles.membershipTypo]}>
@@ -35,7 +34,7 @@ export default function MembershipCard({
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

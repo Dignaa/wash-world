@@ -41,6 +41,7 @@ export const login = createAsyncThunk<
       body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
+    console.log(data);
     if (!res.ok) throw new Error(data.message || 'Login failed');
     await saveValue('jwt', data.token);
 
@@ -80,7 +81,7 @@ export const checkAuth = createAsyncThunk<LoggedInResponse, void>(
   async (_, { rejectWithValue }) => {
     try {
       const token = await getValue('jwt');
-      if (!token) throw new Error('No token found');
+      if (!token) throw new Error();
 
       const decoded: JwtPayload = jwtDecode(token);
 
@@ -123,7 +124,7 @@ const authSlice = createSlice({
       )
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = (action.payload as string) || 'Login failed';
       })
       .addCase(signup.pending, (state) => {
         state.loading = true;
@@ -135,7 +136,7 @@ const authSlice = createSlice({
       })
       .addCase(signup.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = (action.payload as string) || 'Signup failed';
       })
       .addCase(checkAuth.pending, (state) => {
         state.loading = true;
