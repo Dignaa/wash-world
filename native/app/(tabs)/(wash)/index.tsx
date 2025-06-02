@@ -372,6 +372,8 @@ const styles = StyleSheet.create({
   picker: {
     marginBottom: 12,
     backgroundColor: '#FFF',
+    borderBottomWidth: 4,
+    borderBottomColor: '#E5E5E5',
   },
   orText: {
     textAlign: 'center',

@@ -157,11 +157,9 @@ export default function Profile() {
             </View>
             <View style={[styles.location, styles.locationFlexBox]}>
               <View style={styles.licensePlateParent}>
-                <View style={[styles.locationLabel, styles.parentFlexBox]}>
-                  <Text style={[styles.location1, styles.location1Typo]}>
-                    Location
-                  </Text>
-                </View>
+                <Text style={[styles.location1, styles.location1Typo]}>
+                  Location
+                </Text>
                 <Picker
                   selectedValue={selectedLocation}
                   onValueChange={(val) => {
@@ -301,20 +299,9 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   dropdown: {
-    paddingHorizontal: 0,
-    gap: 0,
-    justifyContent: 'space-between',
-    paddingVertical: 0,
-    borderBottomWidth: 6,
-    borderColor: '#e5e5e5',
-    borderStyle: 'solid',
-    flexDirection: 'row',
-    overflow: 'hidden',
-    height: 50,
-    width: '100%',
     backgroundColor: '#fff',
-    alignItems: 'center',
-    alignSelf: 'stretch',
+    borderBottomWidth: 4,
+    borderBottomColor: '#E5E5E5',
   },
   location: {
     justifyContent: 'center',
