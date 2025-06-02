@@ -16,23 +16,30 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Keyboard,
+  ActivityIndicator,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { Wash } from '@/types';
-import { Membership } from '@/types';
 import { Link } from 'expo-router';
+import { useMemberships } from '@/hooks/useMemberships';
 
 export default function Profile() {
   const dispatch = useDispatch<AppDispatch>();
   const { token, loading, error, userId, username } = useSelector(
     (state: RootState) => state.auth,
   );
+
+  const {
+    data: memberships,
+    isLoading: membershipsLoading,
+    isError: membershipsError,
+    error: membershipsErrorObj,
+  } = useMemberships();
+
   const [email, setEmail] = useState('');
-  const [isValidEmail, setIsValidEmail] = useState(true);
 
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
-  const [memberships, setMemberships] = useState<Membership[]>([]);
   const [washes, setWashes] = useState<Wash[]>([]);
 
   useEffect(() => {
@@ -41,7 +48,6 @@ export default function Profile() {
 
   useEffect(() => {
     if (token) {
-      fetchMemberships();
       fetchWashes();
     }
   }, [token]);
@@ -58,36 +64,6 @@ export default function Profile() {
       alert(
         'Please fill the details before ' + (isLogin ? 'log in' : 'sign up'),
       );
-    }
-  };
-
-  const fetchMemberships = async () => {
-    try {
-      if (!token || !userId) {
-        await dispatch(checkAuth());
-      }
-
-      const res = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}user/${userId}/memberships`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        console.error('Membership Fetch error: ', errorData.message);
-        throw new Error(errorData.message || 'Membership Fetch failed');
-      }
-
-      const data: Membership[] = await res.json();
-      setMemberships(data);
-    } catch (error: any) {
-      console.error('Membership Fetch error:', error.message);
     }
   };
 
@@ -155,40 +131,44 @@ export default function Profile() {
             </View>
           </View>
           {/* Memberships section */}
-          <View style={styles.sectionWrapper}>
-            <Text style={[styles.name, styles.nameBox]}>Memberships</Text>
-            {memberships.length === 0 ? (
-              <Text style={styles.centeredText}>No memberships.</Text>
-            ) : (
-              memberships.map((membership) => (
-                <Link
-                  key={membership.id}
-                  href={{
-                    pathname: '/(tabs)/(profile)/[carId]',
-                    params: { carId: membership.car.id },
-                  }}
-                  style={{ width: '100%' }}
-                >
-                  <View style={{ width: '100%' }}>
-                    <MembershipCard
-                      membershipType={membership.membershipType.type}
-                      price={membership.membershipType.price}
-                      licensePlate={membership.car.registrationNumber}
-                    />
-                  </View>
-                </Link>
-              ))
-            )}
+          {membershipsLoading ? (
+            <ActivityIndicator size="large" />
+          ) : (
+            <View style={styles.sectionWrapper}>
+              <Text style={[styles.name, styles.nameBox]}>Memberships</Text>
+              {memberships!.length === 0 ? (
+                <Text style={styles.centeredText}>No memberships.</Text>
+              ) : (
+                memberships!.map((membership) => (
+                  <Link
+                    key={membership.id}
+                    href={{
+                      pathname: '/(tabs)/(profile)/[carId]',
+                      params: { carId: membership.car.id },
+                    }}
+                    style={{ width: '100%' }}
+                  >
+                    <View style={{ width: '100%' }}>
+                      <MembershipCard
+                        membershipType={membership.membershipType.type}
+                        price={membership.membershipType.price}
+                        licensePlate={membership.car.registrationNumber}
+                      />
+                    </View>
+                  </Link>
+                ))
+              )}
 
-            <View style={styles.buttonWrapper}>
-              <View style={[styles.buttonFlexBox]}>
-                <Button
-                  title="Add membership"
-                  link="/(tabs)/(profile)/membership"
-                />
+              <View style={styles.buttonWrapper}>
+                <View style={[styles.buttonFlexBox]}>
+                  <Button
+                    title="Add membership"
+                    link="/(tabs)/(profile)/membership"
+                  />
+                </View>
               </View>
             </View>
-          </View>
+          )}
           {/* Washes section */}
           <View style={styles.sectionWrapper}>
             <Text style={[styles.name, styles.nameBox]}>Washes</Text>
@@ -234,7 +214,6 @@ export default function Profile() {
             onChange={setEmail}
             placeholder="Email"
             validateEmail
-            onValidationError={setIsValidEmail}
           />
           <CustomTextInput
             text={password}

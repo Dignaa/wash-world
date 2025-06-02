@@ -17,8 +17,10 @@ import { Picker } from '@react-native-picker/picker';
 import NewMembershipCard from '@/components/NewMembershipCard';
 import Button from '@/components/Button';
 import { checkAuth } from '@/store/authSlice';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function Profile() {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const { token, userId } = useSelector((state: RootState) => state.auth);
@@ -118,6 +120,8 @@ export default function Profile() {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to create membership');
       }
+
+      queryClient.invalidateQueries({ queryKey: ['memberships', userId] });
 
       Alert.alert('Success', 'Membership created successfully!');
       router.back();
