@@ -33,7 +33,6 @@ export default function licensePlateInput({ text, onChange }: InputProps) {
       minWidth: '100%',
     },
     dkTypo: {
-      textAlign: 'right',
       fontFamily: 'Inter-Bold',
       fontWeight: '700',
       fontSize: 16,
@@ -56,9 +55,8 @@ export default function licensePlateInput({ text, onChange }: InputProps) {
       borderTopLeftRadius: 3,
       borderBottomLeftRadius: 3,
       backgroundColor: '#335ab3',
-      paddingHorizontal: 4,
+      paddingHorizontal: 8,
       height: '100%',
-      width: 55,
       justifyContent: 'center',
       overflow: 'hidden',
     },

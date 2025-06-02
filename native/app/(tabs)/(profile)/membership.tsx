@@ -144,50 +144,44 @@ export default function Profile() {
           showsHorizontalScrollIndicator={false}
         >
           <View style={styles.main}>
-            <View style={[styles.memberships, styles.locationFlexBox]}>
-              <View style={styles.membershipsLabel}>
-                <Text style={[styles.membership, styles.cart1Typo]}>
-                  License Plate
-                </Text>
+            <View style={styles.section}>
+              <View style={styles.label}>
+                <Text style={styles.labelTypo}>License Plate</Text>
               </View>
               <LicensePlateInput
                 text={licensePlate}
                 onChange={setLicensePlate}
               />
             </View>
-            <View style={[styles.location, styles.locationFlexBox]}>
-              <View style={styles.licensePlateParent}>
-                <Text style={[styles.location1, styles.location1Typo]}>
-                  Location
-                </Text>
-                <Picker
-                  selectedValue={selectedLocation}
-                  onValueChange={(val) => {
-                    setSelectedLocation(val);
-                  }}
-                  style={styles.dropdown}
-                >
-                  <Picker.Item
-                    label="Choose washstation"
-                    value={null}
-                    style={styles.ab12345}
-                  />
-                  {locations.map((loc) => (
-                    <Picker.Item
-                      key={loc.id}
-                      label={loc.address}
-                      value={loc.id}
-                      style={styles.kr}
-                    />
-                  ))}
-                </Picker>
+            <View style={styles.section}>
+              <View style={styles.label}>
+                <Text style={styles.labelTypo}>Location</Text>
               </View>
+              <Picker
+                selectedValue={selectedLocation}
+                onValueChange={(val) => {
+                  setSelectedLocation(val);
+                }}
+                style={styles.dropdown}
+              >
+                <Picker.Item
+                  label="Choose washstation"
+                  value={null}
+                  style={styles.picker}
+                />
+                {locations.map((loc) => (
+                  <Picker.Item
+                    key={loc.id}
+                    label={loc.address}
+                    value={loc.id}
+                    style={styles.cartPrice}
+                  />
+                ))}
+              </Picker>
             </View>
-            <View style={[styles.memberships, styles.locationFlexBox]}>
-              <View style={styles.membershipsLabel}>
-                <Text style={[styles.membership, styles.cart1Typo]}>
-                  Membership
-                </Text>
+            <View style={styles.section}>
+              <View style={styles.label}>
+                <Text style={styles.labelTypo}>Membership</Text>
               </View>
               {!loadingMembershipTypes &&
                 membershipTypes.length > 0 &&
@@ -203,33 +197,33 @@ export default function Profile() {
                   />
                 ))}
             </View>
-            <View style={[styles.memberships, styles.locationFlexBox]}>
-              <View style={styles.membershipsLabel}>
-                <Text style={[styles.membership, styles.cart1Typo]}>Cart</Text>
-              </View>
-              <View style={styles.cartCard}>
-                <View style={styles.totalFlexBox}>
-                  <View style={styles.brilliantAllInclusiveParent}>
-                    <Text style={[styles.brilliantAll, styles.brilliantTypo]}>
+            {selectedMembershipType! ? (
+              <View style={styles.section}>
+                <View style={styles.label}>
+                  <Text style={[styles.labelTypo]}>Cart</Text>
+                </View>
+                <View style={styles.cartCard}>
+                  <View style={styles.totalFlexBox}>
+                    <Text style={[styles.cartMembership, styles.cartTypo]}>
                       {selectedMembershipType?.type}
                     </Text>
-                  </View>
-                  <View style={[styles.krWrapper, styles.krWrapperFlexBox]}>
-                    <Text style={[styles.kr, styles.dkTypo]}>
-                      {selectedMembershipType?.price ??
-                        '' + (selectedMembershipType ? '  kr.' : '')}
+                    <Text style={[styles.cartPrice, styles.cartTypo]}>
+                      {(selectedMembershipType?.price ?? '') +
+                        (selectedMembershipType ? '  kr.' : '')}
                     </Text>
                   </View>
                 </View>
+                <View style={[styles.pay]}>
+                  <Button
+                    title="Pay"
+                    onPress={handleSubmit}
+                    style={styles.button}
+                  />
+                </View>
               </View>
-              <View style={[styles.pay, styles.parentFlexBox]}>
-                <Button
-                  title="Pay"
-                  onPress={handleSubmit}
-                  style={styles.button}
-                />
-              </View>
-            </View>
+            ) : (
+              <></>
+            )}
           </View>
         </ScrollView>
       </View>
@@ -237,41 +231,18 @@ export default function Profile() {
   }
 }
 const styles = StyleSheet.create({
-  locationFlexBox: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  location1Typo: {
-    display: 'flex',
-    height: 22,
-    textAlign: 'left',
-    color: '#000',
-    fontFamily: 'Inter-Bold',
-    fontWeight: '700',
-    fontSize: 18,
-    alignItems: 'center',
-  },
-  parentFlexBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  dkTypo: {
-    textAlign: 'right',
-    fontSize: 16,
-  },
-  krWrapperFlexBox: {
-    alignItems: 'flex-end',
-    justifyContent: 'center',
-  },
-  cart1Typo: {
+  labelTypo: {
     textAlign: 'center',
     color: '#000',
     fontFamily: 'Inter-Bold',
     fontWeight: '700',
     fontSize: 18,
+    position: 'absolute',
+    top: 0,
+    left: 5,
   },
-  brilliantTypo: {
-    fontSize: 18,
+  cartTypo: {
+    fontSize: 16,
     textAlign: 'left',
   },
   totalFlexBox: {
@@ -281,22 +252,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-
-  ab12345: {
+  picker: {
     color: '#e5e5e5',
     fontFamily: 'Inter-Regular',
-  },
-
-  licensePlateParent: {
-    gap: 8,
-    alignSelf: 'stretch',
-  },
-  location1: {
-    height: 22,
-    flex: 1,
-  },
-  locationLabel: {
-    alignSelf: 'stretch',
   },
   dropdown: {
     backgroundColor: '#fff',
@@ -307,45 +265,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'stretch',
   },
-  membership: {
-    position: 'absolute',
-    top: 0,
-    left: 5,
-  },
-  membershipsLabel: {
+  label: {
     height: 22,
     alignSelf: 'stretch',
   },
-
   brilliant: {
     color: '#fff',
     textAlign: 'left',
     fontSize: 18,
   },
-
-  memberships: {
+  section: {
     gap: 8,
     justifyContent: 'center',
   },
-  brilliantAll: {
+  cartMembership: {
     fontFamily: 'Inter-Regular',
     textAlign: 'left',
     color: '#000',
   },
-
-  brilliantAllInclusiveParent: {
-    gap: 4,
-    justifyContent: 'center',
-  },
-  kr: {
+  cartPrice: {
     fontFamily: 'Inter-Regular',
+    textAlign: 'left',
     color: '#000',
-    width: '100%',
-  },
-  krWrapper: {
-    paddingVertical: 10,
-    overflow: 'hidden',
-    paddingHorizontal: 0,
   },
   cartCard: {
     padding: 12,
@@ -366,10 +307,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  pay: {
-    justifyContent: 'center',
-    alignSelf: 'stretch',
-  },
+  pay: { height: 60 },
   main: {
     backgroundColor: '#f7f7f7',
     width: '100%',
