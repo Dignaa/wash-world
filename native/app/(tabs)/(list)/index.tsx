@@ -71,7 +71,7 @@ export default function Index() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" testID="loading-indicator"/>
       </View>
     );
   }
