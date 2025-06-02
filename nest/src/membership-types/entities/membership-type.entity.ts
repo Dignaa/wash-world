@@ -1,4 +1,4 @@
-import { Membership } from 'src/memberships/entities/membership.entity';
+import { Membership } from '../../memberships/entities/membership.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

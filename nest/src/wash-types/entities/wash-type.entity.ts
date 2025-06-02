@@ -1,4 +1,4 @@
-import { Wash } from 'src/washes/entities/wash.entity';
+import { Wash } from '../../washes/entities/wash.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
