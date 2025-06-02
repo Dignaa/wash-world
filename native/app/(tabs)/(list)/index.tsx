@@ -4,6 +4,7 @@ import * as Location from 'expo-location';
 import { Location as LocationType } from '@/types';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
+import { getDistance } from '@/utils/distance';
 
 export default function Index() {
   const [locations, setLocations] = useState<LocationType[]>([]);
@@ -65,24 +66,6 @@ export default function Index() {
       .sort((a, b) => a.distance! - b.distance!);
 
     setLocations(withDistances);
-  };
-
-  // Haversine formula (straight line from a to b (no roads))
-  const getDistance = (
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number,
-  ) => {
-    const toRad = (deg: number) => (deg * Math.PI) / 180;
-    const R = 6371;
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
   };
 
   if (loading) {
