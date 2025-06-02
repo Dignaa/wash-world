@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
-import { Wash } from 'src/washes/entities/wash.entity';
-import { Membership } from 'src/memberships/entities/membership.entity';
+import { Wash } from '../../washes/entities/wash.entity';
+import { Membership } from '../../memberships/entities/membership.entity';
 
 @Entity()
 export class Car {

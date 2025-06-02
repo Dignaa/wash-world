@@ -14,7 +14,7 @@ import { CreateWashDto } from './dto/create-wash.dto';
 import { UpdateWashDto } from './dto/update-wash.dto';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Wash } from './entities/wash.entity';
-import { JwtAuthGuard } from 'src/auth/auth.guard';
+import { JwtAuthGuard } from '../auth/auth.guard';
 
 @ApiTags('wash')
 @Controller('wash')

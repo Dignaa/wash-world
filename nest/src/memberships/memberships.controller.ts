@@ -15,9 +15,9 @@ import { ExtendMembershipDto } from './dto/extend-membership.dto';
 import { UpgradeMembershipDto } from './dto/upgrade-membership.dto';
 import { Membership } from './entities/membership.entity';
 
-import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { PremiumUserGuard } from 'src/auth/member.guard';
-import { OwnershipGuard } from 'src/auth/ownership.guard';
+import { JwtAuthGuard } from '../auth/auth.guard';
+import { PremiumUserGuard } from '../auth/member.guard';
+import { OwnershipGuard } from '../auth/ownership.guard';
 
 import {
   ApiTags,

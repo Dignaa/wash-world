@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { Membership } from './entities/membership.entity';
 import { User } from '../users/entities/user.entity';
 import { ExtendMembershipDto } from './dto/extend-membership.dto';
-import { Car } from 'src/cars/entities/car.entity';
+import { Car } from '../cars/entities/car.entity';
 import { MembershipType } from '../membership-types/entities/membership-type.entity';
 
 @Injectable()
