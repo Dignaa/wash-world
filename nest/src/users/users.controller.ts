@@ -13,9 +13,9 @@ import { UserService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ResponseUserDto } from './dto/response-user.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { OwnershipGuard } from 'src/auth/ownership.guard';
-import { WashService } from 'src/washes/washes.service';
+import { JwtAuthGuard } from '../auth/auth.guard';
+import { OwnershipGuard } from '../auth/ownership.guard';
+import { WashService } from '../washes/washes.service';
 import { plainToInstance } from 'class-transformer';
 
 @ApiTags('user')

@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Location } from '../../locations/entities/location.entity';
-import { MembershipType } from 'src/membership-types/entities/membership-type.entity';
-import { Car } from 'src/cars/entities/car.entity';
+import { MembershipType } from '../../membership-types/entities/membership-type.entity';
+import { Car } from '../../cars/entities/car.entity';
 
 @Entity()
 export class Membership {

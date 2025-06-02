@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from '../users/users.service';
 import { JwtAuthGuard } from './auth.guard';
-import { MembershipService } from 'src/memberships/memberships.service';
+import { MembershipService } from '../memberships/memberships.service';
 
 @Injectable()
 export class PremiumUserGuard extends JwtAuthGuard implements CanActivate {

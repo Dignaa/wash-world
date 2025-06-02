@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Wash } from '../../washes/entities/wash.entity';
-import { Membership } from 'src/memberships/entities/membership.entity';
+import { Membership } from '../../memberships/entities/membership.entity';
 
 @Entity()
 export class Location {

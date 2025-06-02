@@ -4,7 +4,7 @@ import { UpdateWashDto } from './dto/update-wash.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wash } from './entities/wash.entity';
-import { Car } from 'src/cars/entities/car.entity';
+import { Car } from '../cars/entities/car.entity';
 
 @Injectable()
 export class WashService {

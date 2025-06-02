@@ -7,7 +7,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { SignUpDto } from 'src/auth/dto/signupDto';
+import { SignUpDto } from '../auth/dto/signupDto';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
