@@ -36,17 +36,24 @@ export class UserService {
   async isMember(id: number): Promise<boolean> {
     const user = await this.findOne(id);
 
-    return user.memberships?.some((membership) => {
-      if (membership.start && membership.end) {
-        const now = new Date();
-        return new Date(membership.start) <= now && now <= new Date(membership.end);
-      }
-      return false;
-    }) ?? false;
+    return (
+      user.memberships?.some((membership) => {
+        if (membership.start && membership.end) {
+          const now = new Date();
+          return (
+            new Date(membership.start) <= now && now <= new Date(membership.end)
+          );
+        }
+        return false;
+      }) ?? false
+    );
   }
 
   async findOne(id: number): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id }, relations: ['memberships'] });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['memberships'],
+    });
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
@@ -56,7 +63,7 @@ export class UserService {
   async findByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
-      throw new NotFoundException(`User with email ${email} not found`);
+      throw new NotFoundException('No account found with this email address.');
     }
     return user;
   }

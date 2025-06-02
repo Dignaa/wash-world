@@ -7,6 +7,7 @@ import {
   ValidationPipe,
   UsePipes,
   Req,
+  NotFoundException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './auth.guard';

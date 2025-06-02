@@ -28,6 +28,8 @@ export default function Profile() {
     (state: RootState) => state.auth,
   );
   const [email, setEmail] = useState('');
+  const [isValidEmail, setIsValidEmail] = useState(true);
+
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [memberships, setMemberships] = useState<Membership[]>([]);
@@ -46,12 +48,16 @@ export default function Profile() {
 
   const handleSubmit = async () => {
     await SecureStore.setItemAsync('userPassword', password);
-    if (isLogin) {
-      await dispatch(login({ email, password }));
-      await fetchMemberships();
-      await fetchWashes();
+    if (email && password) {
+      if (isLogin) {
+        await dispatch(login({ email, password }));
+      } else {
+        await dispatch(signup({ email, password }));
+      }
     } else {
-      await dispatch(signup({ email, password }));
+      alert(
+        'Please fill the details before ' + (isLogin ? 'log in' : 'sign up'),
+      );
     }
   };
 
@@ -227,6 +233,8 @@ export default function Profile() {
             text={email}
             onChange={setEmail}
             placeholder="Email"
+            validateEmail
+            onValidationError={setIsValidEmail}
           />
           <CustomTextInput
             text={password}
@@ -234,6 +242,7 @@ export default function Profile() {
             placeholder="Password"
             secureTextEntry={true}
           />
+          {error && <Text style={{ color: 'red' }}>{error}</Text>}
           <Button
             title={isLogin ? 'Login' : 'Sign Up'}
             onPress={handleSubmit}
@@ -250,7 +259,6 @@ export default function Profile() {
             />
             {loading && <Text>Loading...</Text>}
           </View>
-          {error && <Text>{error}</Text>}
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
